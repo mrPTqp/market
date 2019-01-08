@@ -1,0 +1,12 @@
+.basketText {
+    font-size: 10pt;
+}
+.phoneText{
+    font-size: 14pt;
+}
+.zeroMargin {
+    margin: 0;
+}
+.item-title {
+    min-height: 70px;
+}
