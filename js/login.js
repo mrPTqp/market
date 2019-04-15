@@ -13,6 +13,10 @@ var users = [
     moneyBalanceDB: 3333
   }
 ]
+
+//объект для хранения токена сессии и idDB пользователя
+var sessions = {};
+
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
   var result = M(V(Y(X(d), 8 * d.length)));
@@ -61,42 +65,59 @@ function bit_rol(d, _) {
 }
 
 //для создания сессии и сохранения ее в куки
-function controlCookies() {
-  //объект для хранения токена сессии и idDB пользователя
-  var sessions = {};
+function controlCookiesAndSessions() {
 
   var email = document.getElementById('exampleInputEmail1').value;
   var password = document.getElementById('exampleInputPassword1').value;
 
-  //функция сравнивает введенные логин и пароль с базой данных (users), если они подходят, то генерирует токен на их основе и записывает логин и токен в sessions и cookie
+  //функция сравнивает введенные логин и пароль с базой данных (users)
   function authentication(email, password) {
     for (var i = 0; i < users.length; i++) {
       if (users[i].idDB == email && users[i].passwordDB == password) {
-        var sumEmailPassword = email + password;
-        var token = MD5(sumEmailPassword);
-        sessions.idDB = token;
-        console.log(sessions);
-        Cookies.set('id', users[i].idDB, { expires: 365 });
-        Cookies.set('sessionID', token, { expires: 365 });
-        console.log(document.cookie);
+        generateToken(email, password);
         replaceAuthenticationFormToGreeting();
-      }      
+      }
     }
     if (!sessions.idDB) alert('Ошибка при вводе email или пароль. Попробуйте еще раз');
   }
+
+  //генерирует на основе достоверных email и password токен для sessionID
+  function generateToken(email, password) {
+    var sumEmailPassword = email + password;
+    var token = MD5(sumEmailPassword);
+
+    setSessions(token);
+    setCookie(email, token);
+  }
+
+  //записывает полученный токен в sessions
+  function setSessions(token) {
+    sessions.idDB = token;
+    console.log(sessions);
+  }
+
+  //записывает токен и email пользователя в куки
+  function setCookie(userIdDB, token) {
+    Cookies.set('id', userIdDB, { expires: 365 });
+    Cookies.set('sessionID', token, { expires: 365 });
+    console.log(document.cookie);
+  }
+
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
   function replaceAuthenticationFormToGreeting() {
     var autorizationForm = document.getElementById('autorization');
 
-    autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + email + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit" onclick="deleteCookie()">Выйти</button></div></div></div>';
+    autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + email + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit" onclick="deleteSessionIDfromCookie()">Выйти</button></div></div></div>';
   };
   authentication(email, password);
 };
-function deleteCookie() {
-  Cookies.remove('email');
-  Cookies.remove('password');
+
+//при нажатии кнопки "Выйти" удаляем sessionID из куки и объекта sessions и заменяем приветствие на форму авторизации
+function deleteSessionIDfromCookie() {
+  Cookies.remove('id');
+  Cookies.remove('sessionID');
   var autorizationForm = document.getElementById('autorization');
-  autorizationForm.innerHTML = '<form class="form-inline"><div class="row"><div class="col-"><input type="email" class="form-control ml-2" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите email"></div><div class="col-"><input type="password" class="form-control ml-2" id="exampleInputPassword1" placeholder="Введите пароль"></div><div class="col-"><button type="submit" class="btn btn-xs btn-primary ml-2" id="submit" onclick="controlCookies()">Войти</button></div></div></form>'
+  autorizationForm.innerHTML = '<form class="form-inline"><div class="row"><div class="col-"><input type="email" class="form-control ml-2" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите email"></div><div class="col-"><input type="password" class="form-control ml-2" id="exampleInputPassword1" placeholder="Введите пароль"></div><div class="col-"><button type="submit" class="btn btn-xs btn-primary ml-2" id="submit" onclick="controlCookiesAndSessions()">Войти</button></div></div></form>'
   console.log(document.cookie);
 };
 
