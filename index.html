@@ -15,49 +15,98 @@
     <title>Интернет-магазин еды</title>
 </head>
 
-<body>   
+<body>
     <!-- Modal -->
-    <div class="modal fade" id="cartModalCenter" tabindex="-1" role="dialog"
-        aria-labelledby="cartModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="cartModalCenter" tabindex="-1" role="dialog" aria-labelledby="cartModalCenterTitle"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="cartModalLongTitle">Modal title</h5>
+                    <h5 class="modal-title" id="cartModalLongTitle">Корзина</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-4">.col-md-4</div>
-                            <div class="col-md-4 ml-auto">.col-md-4 .ml-auto</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3 ml-auto">.col-md-3 .ml-auto</div>
-                            <div class="col-md-2 ml-auto">.col-md-2 .ml-auto</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 ml-auto">.col-md-6 .ml-auto</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-9">
-                                Level 1: .col-sm-9
-                                <div class="row">
-                                    <div class="col-8 col-sm-6">
-                                        Level 2: .col-8 .col-sm-6
-                                    </div>
-                                    <div class="col-4 col-sm-6">
-                                        Level 2: .col-4 .col-sm-6
+                        <div class="row no-gutters">
+                            <!--Image-->
+                            <div class="col-2">
+                                <div class="item-image">
+                                    <img class="mx-auto d-block" src="./icon/juice.jpeg" alt="juice">
+                                </div>
+                            </div>
+                            <!--Name&description-->
+                            <div class="col-4">
+                                <p class="item-title text-left">Сок Добрый Яблоко 2л</p>
+                            </div>
+                            <!--Price for piece-->
+                            <div class="col-2">
+                                <div class="item-price">102р. <sup>99коп.</sup></div>
+                            </div>
+                            <!--Change the number of product-->
+                            <div class="col-2">
+                                <div class="container-fluid">
+                                    <div class="row no-gutters">
+                                        <div class="col-2 mx-auto">
+                                            <button type="button" class="btn btn-outline-primary btn-sm">-</button>
+                                        </div>
+                                        <div class="col-8 mx-auto">
+                                            <p class="text-center">1</p>
+                                        </div>
+                                        <div class="col-2 mx-auto">
+                                            <button type="button" class="btn btn-outline-primary btn-sm">+</button>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            <!--Total amount for such a product-->
+                            <div class="col-2">
+                                <div class="item-price">102р. <sup>99коп.</sup></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!--Image-->
+                            <div class="col-2">
+                                <div class="item-image">
+                                    <img class="mx-auto d-block" src="./icon/coffee.jpeg" alt="juice">
+                                </div>
+                            </div>
+                            <!--Name&description-->
+                            <div class="col-4">
+                                <p class="item-title text-left">Кофе Jacobs Tassimo Cappuccino Т-диски 8шт</p>
+                            </div>
+                            <!--Price for piece-->
+                            <div class="col-2">
+                                <div class="item-price">299р. <sup>99коп.</sup></div>
+                            </div>
+                            <!--Change the number of product-->
+                            <div class="col-2">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <button type="button" class="btn btn-outline-primary btn-sm">-</button>
+                                        </div>
+                                        <div class="col-4">
+                                            <span>1</span>
+                                        </div>
+                                        <div class="col-4">
+                                            <button type="button" class="btn btn-outline-primary btn-sm">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Total amount for such a product-->
+                            <div class="col-2">
+                                <div class="item-price">102р. <sup>99коп.</sup></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+
+                    <button type="button" class="btn btn-primary">Оформить заказ</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
                 </div>
             </div>
         </div>
@@ -86,8 +135,9 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col-3 mr-auto">
                             <div class="container">
-                                <!--Image of cart-->                                
-                                <a class='btn btn-default' data-toggle="modal" data-target="#cartModalCenter" href='#'><img src="./icon/baseline-shopping_cart-24px.svg" width="40"></a>
+                                <!--Image of cart-->
+                                <a class='btn btn-default' data-toggle="modal" data-target="#cartModalCenter"
+                                    href='#'><img src="./icon/baseline-shopping_cart-24px.svg" width="40"></a>
                             </div>
                         </div>
                         <div class="col-9">
