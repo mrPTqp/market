@@ -1,4 +1,31 @@
 "use strict";
+//для хранения товаров (вместо бэк-энда)
+var goods = [
+  {
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodsPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  },
+  {
+    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
+    goodsPrice: 299.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/coffee.jpeg'
+  },
+  {
+    goodsName: 'Масло оливковое 0,5л',
+    goodsPrice: 585.99,
+    numberOfGoods: 123,
+    imageOfGoods: './icon/oil.jpeg'
+  },
+  {
+    goodsName: 'Чай Richard 100п.',
+    goodsPrice: 299.99,
+    numberOfGoods: 4321,
+    imageOfGoods: './icon/tea.jpeg'
+  },
+]
 
 //объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
 var users = [
@@ -121,3 +148,47 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
+/*
+//для помещения товара в корзину
+function productToCart() {
+
+
+
+  <div class="row no-gutters">
+  <!--Image-->
+  <div class="col-2">
+      <div class="item-image">
+          <img class="mx-auto d-block" src="./icon/juice.jpeg" alt="juice">
+      </div>
+  </div>
+  <!--Name&description-->
+  <div class="col-4">
+      <p class="item-title text-left">Сок Добрый Яблоко 2л</p>
+  </div>
+  <!--Price for piece-->
+  <div class="col-2">
+      <div class="item-price">102р. <sup>99коп.</sup></div>
+  </div>
+  <!--Change the number of product-->
+  <div class="col-2">
+      <div class="container-fluid">
+          <div class="row no-gutters">
+              <div class="col-2 mx-auto">
+                  <button type="button" class="btn btn-outline-primary btn-sm">-</button>
+              </div>
+              <div class="col-8 mx-auto text-center">
+                  <p class="text-center">1</p>
+              </div>
+              <div class="col-2 mx-auto">
+                  <button type="button" class="btn btn-outline-primary btn-sm">+</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!--Total amount for such a product-->
+  <div class="col-2">
+      <div class="item-price text-center">102р. <sup>99коп.</sup></div>
+  </div>
+</div>
+}
+*/
