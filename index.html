@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <!-- Modal -->
+    <!-- Modal Cart-->
     <div class="modal fade" id="cartModalCenter" tabindex="-1" role="dialog" aria-labelledby="cartModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                             <!--Name&description-->
-                            <div class="col-4">
+                            <div class="col-3">
                                 <p class="item-title text-left">Сок Добрый Яблоко 2л</p>
                             </div>
                             <!--Price for piece-->
@@ -63,6 +63,11 @@
                             <!--Total amount for such a product-->
                             <div class="col-2">
                                 <div class="item-price text-center">102р. <sup>99коп.</sup></div>
+                            </div>
+                            <div class="col-1">
+                                <button type="button" class="close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -213,7 +218,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="item-actions">
-                                        <button class="btn btn-outline-success my-2 my-sm-0" onclick="productToCart()">
+                                        <button class="btn btn-outline-success my-2 my-sm-0" data-id="1" onclick="productToCart()">
                                             В корзину <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                                         </button>
                                     </div>
