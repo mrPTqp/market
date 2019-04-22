@@ -28,7 +28,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="container-fluid">
+                    <div class="container-fluid" id="cart-item">
                         <div class="row no-gutters">
                             <!--Image-->
                             <div class="col-2">
@@ -64,6 +64,7 @@
                             <div class="col-2">
                                 <div class="item-price text-center">102р. <sup>99коп.</sup></div>
                             </div>
+                            <!-- Delete product from cart-->
                             <div class="col-1">
                                 <button type="button" class="close">
                                     <span aria-hidden="true">×</span>
@@ -218,7 +219,7 @@
                                 </div>
                                 <div class="col-6">
                                     <div class="item-actions">
-                                        <button class="btn btn-outline-success my-2 my-sm-0" data-id="1" onclick="productToCart()">
+                                        <button class="btn btn-outline-success my-2 my-sm-0 add_item" data-id="1">
                                             В корзину <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                                         </button>
                                     </div>

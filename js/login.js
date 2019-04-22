@@ -29,6 +29,90 @@ var goods = [
     numberOfGoods: 4321,
     imageOfGoods: './icon/tea.jpeg'
   },
+  {
+    id: 5,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodsPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  },
+  {
+    id: 6,
+    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
+    goodsPrice: 299.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/coffee.jpeg'
+  },
+  {
+    id: 7,
+    goodsName: 'Масло оливковое 0,5л',
+    goodsPrice: 585.99,
+    numberOfGoods: 123,
+    imageOfGoods: './icon/oil.jpeg'
+  },
+  {
+    id: 8,
+    goodsName: 'Чай Richard 100п.',
+    goodsPrice: 299.99,
+    numberOfGoods: 4321,
+    imageOfGoods: './icon/tea.jpeg'
+  },
+  {
+    id: 9,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodsPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  },
+  {
+    id: 10,
+    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
+    goodsPrice: 299.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/coffee.jpeg'
+  },
+  {
+    id: 11,
+    goodsName: 'Масло оливковое 0,5л',
+    goodsPrice: 585.99,
+    numberOfGoods: 123,
+    imageOfGoods: './icon/oil.jpeg'
+  },
+  {
+    id: 12,
+    goodsName: 'Чай Richard 100п.',
+    goodsPrice: 299.99,
+    numberOfGoods: 4321,
+    imageOfGoods: './icon/tea.jpeg'
+  },
+  {
+    id: 13,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodsPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  },
+  {
+    id: 14,
+    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
+    goodsPrice: 299.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/coffee.jpeg'
+  },
+  {
+    id: 15,
+    goodsName: 'Масло оливковое 0,5л',
+    goodsPrice: 585.99,
+    numberOfGoods: 123,
+    imageOfGoods: './icon/oil.jpeg'
+  },
+  {
+    id: 16,
+    goodsName: 'Чай Richard 100п.',
+    goodsPrice: 299.99,
+    numberOfGoods: 4321,
+    imageOfGoods: './icon/tea.jpeg'
+  },
 ]
 
 //объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
@@ -152,10 +236,66 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
+// объект корзины
+var cart = [
+  {
+    id: 1,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodsPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  }
+]
 
-//для помещения товара в корзину
-function productToCart() {
+var contentItems = document.querySelectorAll('.content-item');
+var cartItem = document.getElementById('.cart-item');
 
+function addEvent(elem, type, handler) {
+  if (elem.addEventListener) {
+    elem.addEventListener(type, handler, false);
+  } else {
+    elem.attachEvent('on' + type, function () { handler.call(elem); });
+  }
+  return false;
+};
 
+for (var i = 0; i < contentItems.length; i++) {
+  addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
+};
 
+function addToCart(e) {
+  
+  if (!cart) {
+    var cart = [];
+  }; // получаем данные корзины или создаём новый массив, если данных еще нет
+
+  parentBox = this.parentNode; // родительский элемент кнопки "Добавить в корзину"
+  itemId = this.getAttribute('data-id'); // ID товара
+
+  for (var i = 0; i < goods.length; i++) {
+    for (itemId in goods[i]) {
+      cart.push(goods[i]);
+    }
+  }
+
+  alert(cart);
 }
+
+
+
+
+/*
+//для добавления товара в корзину
+function productToCart() {
+  if (!cart) {
+    var cart = [];
+  };
+
+ // button = this.parentNode;
+  productID = button.getAttribute('data-id');
+/*
+  for (var i = 0, i < goods.length, i++) {
+    
+  }
+*/
+
