@@ -236,19 +236,8 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
-// объект корзины
-var cart = [
-  {
-    id: 1,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodsPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
-  }
-]
-
-var contentItems = document.querySelectorAll('.content-item');
-var cartItem = document.getElementById('.cart-item');
+var contentItems = document.querySelectorAll('.content-item'); //все кнопки "В корзину"
+var cartItem = document.getElementById('.cart-item'); //сущность корзины
 
 function addEvent(elem, type, handler) {
   if (elem.addEventListener) {
@@ -259,6 +248,7 @@ function addEvent(elem, type, handler) {
   return false;
 };
 
+//вызываем слушателя для каждой кнопки "В корзину" на странице
 for (var i = 0; i < contentItems.length; i++) {
   addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
 };
@@ -269,33 +259,16 @@ function addToCart(e) {
     var cart = [];
   }; // получаем данные корзины или создаём новый массив, если данных еще нет
 
-  parentBox = this.parentNode; // родительский элемент кнопки "Добавить в корзину"
-  itemId = this.getAttribute('data-id'); // ID товара
+  var parentBox = this.parentNode; // родительский элемент кнопки "Добавить в корзину"
+  var itemId = this.getAttribute('data-id'); // ID товара
 
-  for (var i = 0; i < goods.length; i++) {
-    for (itemId in goods[i]) {
-      cart.push(goods[i]);
-    }
-  }
+  for (var j = 1; j < goods.length; j++) {
+    for (var id in goods[j]) {
+      if (id == itemId) {
+      cart.push(goods[j]);
+      } else continue;
+    };
+  };
 
   alert(cart);
 }
-
-
-
-
-/*
-//для добавления товара в корзину
-function productToCart() {
-  if (!cart) {
-    var cart = [];
-  };
-
- // button = this.parentNode;
-  productID = button.getAttribute('data-id');
-/*
-  for (var i = 0, i < goods.length, i++) {
-    
-  }
-*/
-
