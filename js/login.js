@@ -131,6 +131,8 @@ var users = [
 
 //объект для хранения токена сессии и idDB пользователя
 var sessions = {};
+var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
+var cartItem = document.getElementById('cart-item'); //сущность корзины
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
@@ -236,9 +238,7 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
-var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
-//var decreaseProductButtons = document.querySelectorAll('.decrease-amount-product'); //все кнопки уменьшить кол-во товара в корзине
-
+//кроссбраузерный обработчик событий
 function addEvent(elem, type, handler) {
   if (elem.addEventListener) {
     elem.addEventListener(type, handler, false);
@@ -248,12 +248,7 @@ function addEvent(elem, type, handler) {
   return false;
 };
 
-//вызываем слушателя для каждой кнопки "В корзину" на странице
-for (var i = 0; i < contentItems.length; i++) {
-  addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
-};
-
-
+//добавляет товар в сущность корзины
 function addToCart(e) {
 
   if (!cart) {
@@ -275,21 +270,19 @@ function addToCart(e) {
   cartRender(cart);
 };
 
-var cartItem = document.getElementById('cart-item'); //сущность корзины
-
 //функция для отрисовки корзины
 function cartRender(cart) {
   //console.log(cart[0].imageOfGoods); 
   //console.log(cart.length);
   for (var i = 0; i < cart.length; i++) {
     // создаем div для row и вставляем его в сущность корзины
-    var divRaw = document.createElement('div');
-    divRaw.className = "row no-gutters";
-    cartItem.appendChild(divRaw);
-    //в divRaw добавляем divColImage для изображения товара
+    var divRow = document.createElement('div');
+    divRow.className = "row no-gutters";
+    cartItem.appendChild(divRow);
+    //в divRow добавляем divColImage для изображения товара
     var divColImage = document.createElement('div');
     divColImage.className = "col-2";
-    divRaw.appendChild(divColImage);
+    divRow.appendChild(divColImage);
     //в divColImage вставляем divItemImage
     var divItemImage = document.createElement('div');
     divItemImage.className = "item-image";
@@ -301,20 +294,20 @@ function cartRender(cart) {
     divItemImage.appendChild(imgProduct);
     //console.log(cart[i].imageOfGoods);
 
-    //в divRaw добавляем divColName для наименования и описания товара
+    //в divRow добавляем divColName для наименования и описания товара
     var divColName = document.createElement('div');
     divColName.className = "col-3";
-    divRaw.appendChild(divColName);
+    divRow.appendChild(divColName);
     //в divColName вставляем абзац с наименованием и описанием товара
     var pName = document.createElement('p');
     pName.className = "item-title text-left";
     pName.innerHTML = cart[i].goodsName;
     divColName.appendChild(pName);
 
-    //в divRaw добавляем divColPriceForPiece 
+    //в divRow добавляем divColPriceForPiece 
     var divColPriceForPiece = document.createElement('div');
     divColPriceForPiece.className = "col-2";
-    divRaw.appendChild(divColPriceForPiece);
+    divRow.appendChild(divColPriceForPiece);
     //в divColPriceForPiece вставляем divPriceForPiece содержащий цену товара РУБЛИ
     var divPriceForPiece = document.createElement('div');
     divPriceForPiece.className = "item-price";
@@ -325,10 +318,10 @@ function cartRender(cart) {
     supIndex.innerHTML = Number(String(cart[i].goodPrice).split('.')[1] || 0) + 'коп.';
     divPriceForPiece.appendChild(supIndex);
 
-    //в divRaw добавляем divColNumber для уменьшения/увеличения кол-во одного продукта
+    //в divRow добавляем divColNumber для уменьшения/увеличения кол-во одного продукта
     var divColNumber = document.createElement('div');
     divColNumber.className = "col-2";
-    divRaw.appendChild(divColNumber);
+    divRow.appendChild(divColNumber);
     //в divColNumber добавляем контейнер-обертку divContainer
     var divContainer = document.createElement('div');
     divContainer.className = "container-fluid";
@@ -357,9 +350,10 @@ function cartRender(cart) {
     var ValueOfProduct = document.createElement('p');
     ValueOfProduct.className = "text-center";
     ValueOfProduct.setAttribute("id", "present-amount-of-a-product");
-    ValueOfProduct.innerHTML = 2;
+    ValueOfProduct.setAttribute("data-id", cart[i].id);
+    ValueOfProduct.innerHTML = 1;
     divColValueOfProduct.appendChild(ValueOfProduct);
-    
+
     //в divRawNumber добавляем divColButtonIncrease
     var divColButtonIncrease = document.createElement('div');
     divColButtonIncrease.className = "col-2 mx-auto";
@@ -367,28 +361,28 @@ function cartRender(cart) {
     //в divColButtonIncrease добавляем кнопку для увеличения количества товара
     var buttonIncrease = document.createElement('button');
     buttonIncrease.setAttribute("type", "button");
-    buttonIncrease.className = "btn btn-outline-primary btn-sm";
+    buttonIncrease.className = "btn btn-outline-primary btn-sm increase-amount-product";
     buttonIncrease.innerHTML = '+';
     divColButtonIncrease.appendChild(buttonIncrease);
 
-    //в divRaw добавляем divColTotalPriceForSuchAProduct 
+    //в divRow добавляем divColTotalPriceForSuchAProduct 
     var divColTotalPriceForSuchAProduct = document.createElement('div');
     divColTotalPriceForSuchAProduct.className = "col-2";
-    divRaw.appendChild(divColTotalPriceForSuchAProduct);
-    //в divColTotalPriceForSuchAProduct добавляем divTotalPriceForSuchAProduct
+    divRow.appendChild(divColTotalPriceForSuchAProduct);
+    //в divColTotalPriceForSuchAProduct добавляем divTotalPriceForSuchAProduct общую сумму РУБЛИ
     var divTotalPriceForSuchAProduct = document.createElement('div');
-    divTotalPriceForSuchAProduct.className = "item-price text-center";
+    divTotalPriceForSuchAProduct.className = "item-price-total text-center";
     divTotalPriceForSuchAProduct.innerHTML = Math.trunc(cart[i].goodPrice * ValueOfProduct.innerHTML);
     divColTotalPriceForSuchAProduct.appendChild(divTotalPriceForSuchAProduct);
-    //в divTotalPriceForSuchAProduct добавим sup для отображения копеек
+    //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
     var supIndexTotal = document.createElement('sup');
     supIndexTotal.innerHTML = Number(String(cart[i].goodPrice * ValueOfProduct.innerHTML).split('.')[1] || 0) + 'коп.';
     divTotalPriceForSuchAProduct.appendChild(supIndexTotal);
 
-    //в divRaw добавляем divColDeleteProduct для удаления товара из корзины
+    //в divRow добавляем divColDeleteProduct для удаления товара из корзины
     var divColDeleteProduct = document.createElement('div');
     divColDeleteProduct.className = "col-1";
-    divRaw.appendChild(divColDeleteProduct);
+    divRow.appendChild(divColDeleteProduct);
     //в divColDeleteProduct добавляем кнопку для удаления товара
     var buttonDeleteProduct = document.createElement('button');
     buttonDeleteProduct.setAttribute("type", "button");
@@ -398,7 +392,68 @@ function cartRender(cart) {
     var spanX = document.createElement('span');
     spanX.setAttribute("aria-hidden", "btrue");
     spanX.innerHTML = '×';
-    buttonDeleteProduct.appendChild(spanX);    
+    buttonDeleteProduct.appendChild(spanX);
   };
+
+  var decreaseProductButtons = document.querySelectorAll('.decrease-amount-product'); //все кнопки уменьшить кол-во товара в корзине
+  for (var i = 0; i < decreaseProductButtons.length; i++) {
+    addEvent(decreaseProductButtons[i], 'click', decreaseProductAmountInCart);
+  };
+
+  var increaseProductButtons = document.querySelectorAll('.increase-amount-product'); //все кнопки уменьшить кол-во товара в корзине
+  for (var i = 0; i < increaseProductButtons.length; i++) {
+    addEvent(increaseProductButtons[i], 'click', increaseProductAmountInCart);
+  };
+};
+
+//уменьшение количества товара в корзине
+function decreaseProductAmountInCart(e) {
+  var closestRow = this.closest('.row');
+  var elemContentAmount = closestRow.getElementsByTagName('p');
+  var presentValueOfProduct = elemContentAmount[0].innerHTML;
+  if (+presentValueOfProduct >= 1) {
+    elemContentAmount[0].innerHTML = +presentValueOfProduct - 1;
+    changeTotalPriceForSuchAProduct(elemContentAmount[0].innerHTML);
+  };
+};
+
+//увеличение количества товара в корзине
+function increaseProductAmountInCart(e) {
+  var closestRow = this.closest('.row');
+  var elemContentAmount = closestRow.getElementsByTagName('p');
+  var presentValueOfProduct = elemContentAmount[0].innerHTML;
+  var idProduct = elemContentAmount[0].getAttribute('data-id');
+  var tempObjProduct = {};
+  for (var i = 0; i < goods.length; i++) {
+    for (var key in goods[i]) {
+      if (goods[i][key] == idProduct) {
+        tempObjProduct = goods[i];
+      };
+    };
+  };
+
+  if (+presentValueOfProduct < tempObjProduct.numberOfGoods)
+  elemContentAmount[0].innerHTML = +presentValueOfProduct + 1;
+  var priceForPiece = tempObjProduct.goodPrice;
+  changeTotalPriceForSuchAProduct(presentValueOfProduct, priceForPiece, e);
+};
+
+//формирование стоимости продукта в зависимости от количества
+function changeTotalPriceForSuchAProduct(totalAmountOfProduct, priceForPiece, e) {
+  var closestRow = e.closest('.row');
+  var secondRow = closestRow.closest('.row');
+  var elemTotalPriceFotSuchProduct = secondRow.getElementsByClassName('item-price-total');
+  //var supElem = elemTotalPriceFotSuchProduct.getElementsByTagName('sup');
+  elemTotalPriceFotSuchProduct.innerHTML = Math.trunc(+priceForPiece * +totalAmountOfProduct);  
+  //в elemTotalPriceFotSuchProduct добавим sup для отображения общей суммы КОПЕЕК
+  var supIndexTotal = document.createElement('sup');
+  supIndexTotal.innerHTML = Number(String(+priceForPiece * +totalAmountOfProduct).split('.')[1] || 0) + 'коп.';
+  elemTotalPriceFotSuchProduct.appendChild(supIndexTotal);
+
+
+}
+//вызываем слушателя для каждой кнопки "В корзину" на странице
+for (var i = 0; i < contentItems.length; i++) {
+  addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
 };
 
