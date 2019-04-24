@@ -133,6 +133,7 @@ var users = [
 var sessions = {};
 var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
 var cartItem = document.getElementById('cart-item'); //сущность корзины
+var cart = []; //промежуточный объект корзины
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
@@ -248,15 +249,16 @@ function addEvent(elem, type, handler) {
   return false;
 };
 
-//добавляет товар в сущность корзины
+//добавляет товар в промежуточную корзину
 function addToCart(e) {
-
-  if (!cart) {
-    var cart = [];
-  }; // получаем данные корзины или создаём новый массив, если данных еще нет
 
   var itemId = this.getAttribute('data-id'); // ID товара
 
+  for (var i = 0; i < cart.length; i++) {
+    for (var key in cart[i]) {      
+      if (cart[i][key] == itemId) return;
+    };
+  };
   //теперь, получив itemID перебираем массив goods и, если находим нужный нам объект, то передаем его в корзину
   for (var i = 0; i < goods.length; i++) {
     for (var key in goods[i]) {
@@ -265,15 +267,19 @@ function addToCart(e) {
       };
     };
   };
-  //console.log(cart); 
+  console.log(cart);
   //а теперь вызываем функцию для отрисовки корзины
-  cartRender(cart);
+  cartRender();
+  calculateTotalPrice();
 };
 
 //функция для отрисовки корзины
-function cartRender(cart) {
+function cartRender() {
   //console.log(cart[0].imageOfGoods); 
-  //console.log(cart.length);
+  //console.log(cart.length);  
+  //очистим ранее отрисованную корзину
+  cartItem.innerHTML = ' ';
+
   for (var i = 0; i < cart.length; i++) {
     // создаем div для row и вставляем его в сущность корзины
     var divRow = document.createElement('div');
@@ -301,7 +307,7 @@ function cartRender(cart) {
     //в divColName вставляем абзац с наименованием и описанием товара
     var pName = document.createElement('p');
     pName.className = "item-title text-left";
-    pName.innerHTML = cart[i].goodsName;
+    pName.innerHTML = cart[i].goodsName;    
     divColName.appendChild(pName);
 
     //в divRow добавляем divColPriceForPiece 
@@ -386,23 +392,31 @@ function cartRender(cart) {
     //в divColDeleteProduct добавляем кнопку для удаления товара
     var buttonDeleteProduct = document.createElement('button');
     buttonDeleteProduct.setAttribute("type", "button");
+    buttonDeleteProduct.setAttribute("data-id", cart[i].id);
     buttonDeleteProduct.className = "close";
     divColDeleteProduct.appendChild(buttonDeleteProduct);
     //внутрь кнопки buttonDeleteProduct добавляем span
     var spanX = document.createElement('span');
     spanX.setAttribute("aria-hidden", "btrue");
     spanX.innerHTML = '×';
-    buttonDeleteProduct.appendChild(spanX);
+    buttonDeleteProduct.appendChild(spanX);    
   };
 
   var decreaseProductButtons = document.querySelectorAll('.decrease-amount-product'); //все кнопки уменьшить кол-во товара в корзине
   for (var i = 0; i < decreaseProductButtons.length; i++) {
     addEvent(decreaseProductButtons[i], 'click', decreaseProductAmountInCart);
+    addEvent(decreaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
   };
 
   var increaseProductButtons = document.querySelectorAll('.increase-amount-product'); //все кнопки уменьшить кол-во товара в корзине
   for (var i = 0; i < increaseProductButtons.length; i++) {
     addEvent(increaseProductButtons[i], 'click', increaseProductAmountInCart);
+    addEvent(increaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
+  };
+
+  var deleteProductButton = document.querySelectorAll('.close'); //все кнопки удаления товара
+  for (var i = 0; i < deleteProductButton.length; i++) {
+    addEvent(deleteProductButton[i], 'click', deleteProduct);
   };
 };
 
@@ -413,7 +427,6 @@ function decreaseProductAmountInCart(e) {
   var presentValueOfProduct = elemContentAmount[0].innerHTML;
   if (+presentValueOfProduct >= 1) {
     elemContentAmount[0].innerHTML = +presentValueOfProduct - 1;
-    changeTotalPriceForSuchAProduct(elemContentAmount[0].innerHTML);
   };
 };
 
@@ -431,27 +444,52 @@ function increaseProductAmountInCart(e) {
       };
     };
   };
-
   if (+presentValueOfProduct < tempObjProduct.numberOfGoods)
-  elemContentAmount[0].innerHTML = +presentValueOfProduct + 1;
-  var priceForPiece = tempObjProduct.goodPrice;
-  changeTotalPriceForSuchAProduct(presentValueOfProduct, priceForPiece, e);
+    elemContentAmount[0].innerHTML = +presentValueOfProduct + 1;
 };
 
-//формирование стоимости продукта в зависимости от количества
-function changeTotalPriceForSuchAProduct(totalAmountOfProduct, priceForPiece, e) {
-  var closestRow = e.closest('.row');
-  var secondRow = closestRow.closest('.row');
-  var elemTotalPriceFotSuchProduct = secondRow.getElementsByClassName('item-price-total');
-  //var supElem = elemTotalPriceFotSuchProduct.getElementsByTagName('sup');
-  elemTotalPriceFotSuchProduct.innerHTML = Math.trunc(+priceForPiece * +totalAmountOfProduct);  
-  //в elemTotalPriceFotSuchProduct добавим sup для отображения общей суммы КОПЕЕК
+function changeTotalPriceForSuchAProduct(e) {
+  var closestRow = this.closest('.row');
+  var elemContentAmount = closestRow.getElementsByTagName('p');
+  var parentOfRow = closestRow.parentNode;
+  var secondRow = parentOfRow.closest('.row');
+  var elemTotalPriceFotSuchProduct = secondRow.getElementsByClassName('item-price-total')[0];
+  var idProduct = elemContentAmount[0].getAttribute('data-id');
+  var tempObjProduct = {};
+  for (var i = 0; i < goods.length; i++) {
+    for (var key in goods[i]) {
+      if (goods[i][key] == idProduct) {
+        tempObjProduct = goods[i];
+      };
+    };
+  };
+  var priceForPiece = tempObjProduct.goodPrice;
+  var presentValueOfProduct = elemContentAmount[0].innerHTML;
+  elemTotalPriceFotSuchProduct.innerHTML = Math.trunc(+priceForPiece * +presentValueOfProduct);
   var supIndexTotal = document.createElement('sup');
-  supIndexTotal.innerHTML = Number(String(+priceForPiece * +totalAmountOfProduct).split('.')[1] || 0) + 'коп.';
+  supIndexTotal.innerHTML = Number(String((+priceForPiece * +presentValueOfProduct).toFixed(2)).split('.')[1] || 0) + 'коп.';
   elemTotalPriceFotSuchProduct.appendChild(supIndexTotal);
+};
 
-
+function deleteProduct(e) {
+  var removeProductID = this.getAttribute('data-id');  
+  for (var i = 0; i < cart.length; i++) {
+    for (var key in cart[i]) {      
+      if (cart[i][key] == removeProductID) {
+        cart.splice(i, 1);
+        break          
+      };      
+    };
+  };  
+  cartRender();
+};
+/*
+function calculateTotalPrice() {
+  var elemTotalPrice = document.getElementById('total-price');
+  var elemsItemPriceTotal = document.getElementsByClassName('item-price-total');
+  var itemPriceTotalRUB
 }
+*/
 //вызываем слушателя для каждой кнопки "В корзину" на странице
 for (var i = 0; i < contentItems.length; i++) {
   addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
