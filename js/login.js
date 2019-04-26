@@ -196,7 +196,9 @@ function controlCookiesAndSessions() {
         replaceAuthenticationFormToGreeting();
       }
     }
-    if (!sessions.idDB) alert('Ошибка при вводе email или пароль. Попробуйте еще раз');
+    if (!sessions.idDB) {
+      alert('Ошибка при вводе email или пароль. Попробуйте еще раз')
+    };
   }
 
   //генерирует на основе достоверных email и password токен для sessionID
