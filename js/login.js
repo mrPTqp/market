@@ -134,7 +134,7 @@ var sessions = {};
 var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
-
+var mainScreenAmountGoods = 8;
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
   var result = M(V(Y(X(d), 8 * d.length)));
@@ -240,6 +240,74 @@ function deleteSessionIDfromCookie() {
   autorizationForm.innerHTML = '<form class="form-inline"><div class="row"><div class="col-"><input type="email" class="form-control ml-2" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите email"></div><div class="col-"><input type="password" class="form-control ml-2" id="exampleInputPassword1" placeholder="Введите пароль"></div><div class="col-"><button type="submit" class="btn btn-xs btn-primary ml-2" id="submit" onclick="controlCookiesAndSessions()">Войти</button></div></div></form>'
   console.log(document.cookie);
 };
+
+function productGridGeneration(mainScreenAmountGoods) {
+  var rowContentGrid = document.querySelector('.content-grid');
+  
+  for (var i = 0; i < mainScreenAmountGoods; i++) {
+    var divCol = document.createElement('div');
+    divCol.className = "col-md-3 content-item";
+    rowContentGrid.appendChild(divCol);
+    
+    var divWrap = document.createElement('div');
+    divWrap.className = "item-wrapper my-3";
+    divCol.appendChild(divWrap);
+
+    var divItemImage = document.createElement('div');
+    divItemImage.className = "item-image";
+    divWrap.appendChild(divItemImage);
+
+    var itemImage = document.createElement('img');
+    itemImage.className = "mx-auto d-block";
+    itemImage.setAttribute("src", goods[i].imageOfGoods);
+    divItemImage.appendChild(itemImage);
+
+    var divFluid = document.createElement('div');
+    divFluid.className = "container-fluid";
+    divWrap.appendChild(divFluid);
+
+    var itemTitle = document.createElement('h5');
+    itemTitle.className = "item-title text-center";
+    itemTitle.innerHTML = goods[i].goodsName;
+    divFluid.appendChild(itemTitle);
+
+    var divRowPriceAndBuy = document.createElement('div');
+    divRowPriceAndBuy.className = "row no-gutters";
+    divFluid.appendChild(divRowPriceAndBuy);
+
+    var divColPrice = document.createElement('div');
+    divColPrice.className = "col-6";
+    divRowPriceAndBuy.appendChild(divColPrice);
+
+    var spanPriceRub = document.createElement('span');
+    spanPriceRub.className = "item-price";
+    spanPriceRub.innerHTML =  Math.trunc(goods[i].goodPrice) + 'р.';
+    divColPrice.appendChild(spanPriceRub);
+
+    var supPriceKop = document.createElement('sup');
+    supPriceKop.innerHTML = Number(String(goods[i].goodPrice).split('.')[1] || 0) + 'коп.';
+    divColPrice.appendChild(supPriceKop);
+
+    var divWrapColButtonToCart = document.createElement('div');
+    divWrapColButtonToCart.className = "col-6";
+    divRowPriceAndBuy.appendChild(divWrapColButtonToCart);
+
+    var divColButtonToCart = document.createElement('div');
+    divColButtonToCart.className = "item-actions";
+    divWrapColButtonToCart.appendChild(divColButtonToCart);
+
+    var buttonBuy = document.createElement('button');
+    buttonBuy.className = "btn btn-outline-success my-2 my-sm-0 add_item";
+    buttonBuy.setAttribute("data-id", goods[i].id);
+    buttonBuy.innerHTML = "В корзину";
+    divColButtonToCart.appendChild(buttonBuy);
+
+    var iTag = document.createElement('i');
+    iTag.className = "fas fa-shopping-cart";
+    iTag.setAttribute("aria-hidden", true);
+    buttonBuy.appendChild(iTag);
+  }
+}
 
 //кроссбраузерный обработчик событий
 function addEvent(elem, type, handler) {
@@ -385,7 +453,7 @@ function cartRender() {
     divTotalPriceForSuchAProduct.className = "item-price-total text-center";
     divColTotalPriceForSuchAProduct.appendChild(divTotalPriceForSuchAProduct)
     //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
-    var TotalPriceForSuchAProduct = document.createElement('span');    
+    var TotalPriceForSuchAProduct = document.createElement('span');
     TotalPriceForSuchAProduct.innerHTML = Math.trunc(cart[i].goodPrice * ValueOfProduct.innerHTML) + 'р.';
     divTotalPriceForSuchAProduct.appendChild(TotalPriceForSuchAProduct);
     //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
@@ -571,7 +639,7 @@ function renderTotalAmountAndPriceMainPage() {
     totlaAmount += +amountOfSuchAProduct;
   };
   //console.log(totlaAmount);
-  
+
   elemAmountMainPage.innerHTML = totlaAmount;
   elemPriceMainPageRUB.innerHTML = ModalCartTotalPriceRUB;
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
@@ -582,3 +650,4 @@ for (var i = 0; i < contentItems.length; i++) {
   addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
 };
 
+productGridGeneration(mainScreenAmountGoods);
