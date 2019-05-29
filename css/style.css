@@ -10,3 +10,7 @@
 .item-title {
     min-height: 70px;
 } 
+.content-grid { 
+    height:630px; 
+    overflow: scroll; 
+} 

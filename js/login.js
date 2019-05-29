@@ -2,117 +2,152 @@
 //для хранения товаров (вместо бэк-энда)
 var goods = [
   {
-    id: 1,
+    id: 100000001,
     goodsName: 'Сок Добрый Яблоко 2л',
     goodPrice: 102.99,
     numberOfGoods: 13,
     imageOfGoods: './icon/juice.jpeg'
   },
   {
-    id: 2,
+    id: 100000002,
     goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
     goodPrice: 299.99,
     numberOfGoods: 5,
     imageOfGoods: './icon/coffee.jpeg'
   },
   {
-    id: 3,
+    id: 100000003,
     goodsName: 'Масло оливковое 0,5л',
     goodPrice: 585.99,
     numberOfGoods: 123,
     imageOfGoods: './icon/oil.jpeg'
   },
   {
-    id: 4,
+    id: 100000004,
     goodsName: 'Чай Richard 100п.',
     goodPrice: 299.99,
     numberOfGoods: 4321,
     imageOfGoods: './icon/tea.jpeg'
   },
   {
-    id: 5,
+    id: 100000005,
     goodsName: 'Сок Добрый Яблоко 2л',
     goodPrice: 102.99,
     numberOfGoods: 13,
     imageOfGoods: './icon/juice.jpeg'
   },
   {
-    id: 6,
+    id: 100000006,
     goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
     goodPrice: 299.99,
     numberOfGoods: 5,
     imageOfGoods: './icon/coffee.jpeg'
   },
   {
-    id: 7,
+    id: 100000007,
     goodsName: 'Масло оливковое 0,5л',
     goodPrice: 585.99,
     numberOfGoods: 123,
     imageOfGoods: './icon/oil.jpeg'
   },
   {
-    id: 8,
+    id: 100000008,
     goodsName: 'Чай Richard 100п.',
     goodPrice: 299.99,
     numberOfGoods: 4321,
     imageOfGoods: './icon/tea.jpeg'
   },
   {
-    id: 9,
+    id: 100000009,
     goodsName: 'Сок Добрый Яблоко 2л',
     goodPrice: 102.99,
     numberOfGoods: 13,
     imageOfGoods: './icon/juice.jpeg'
   },
   {
-    id: 10,
+    id: 100000010,
     goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
     goodPrice: 299.99,
     numberOfGoods: 5,
     imageOfGoods: './icon/coffee.jpeg'
   },
   {
-    id: 11,
+    id: 100000011,
     goodsName: 'Масло оливковое 0,5л',
     goodPrice: 585.99,
     numberOfGoods: 123,
     imageOfGoods: './icon/oil.jpeg'
   },
   {
-    id: 12,
+    id: 100000012,
     goodsName: 'Чай Richard 100п.',
     goodPrice: 299.99,
     numberOfGoods: 4321,
     imageOfGoods: './icon/tea.jpeg'
   },
   {
-    id: 13,
+    id: 100000013,
     goodsName: 'Сок Добрый Яблоко 2л',
     goodPrice: 102.99,
     numberOfGoods: 13,
     imageOfGoods: './icon/juice.jpeg'
   },
   {
-    id: 14,
+    id: 100000014,
     goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
     goodPrice: 299.99,
     numberOfGoods: 5,
     imageOfGoods: './icon/coffee.jpeg'
   },
   {
-    id: 15,
+    id: 100000015,
     goodsName: 'Масло оливковое 0,5л',
     goodPrice: 585.99,
     numberOfGoods: 123,
     imageOfGoods: './icon/oil.jpeg'
   },
   {
-    id: 16,
+    id: 100000016,
     goodsName: 'Чай Richard 100п.',
     goodPrice: 299.99,
     numberOfGoods: 4321,
     imageOfGoods: './icon/tea.jpeg'
   },
+  {
+    id: 100000017,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  },
+  {
+    id: 100000018,
+    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
+    goodPrice: 299.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/coffee.jpeg'
+  },
+  {
+    id: 100000019,
+    goodsName: 'Масло оливковое 0,5л',
+    goodPrice: 585.99,
+    numberOfGoods: 123,
+    imageOfGoods: './icon/oil.jpeg'
+  },
+  {
+    id: 100000020,
+    goodsName: 'Чай Richard 100п.',
+    goodPrice: 299.99,
+    numberOfGoods: 4321,
+    imageOfGoods: './icon/tea.jpeg'
+  },
+  {
+    id: 100000021,
+    goodsName: 'Сок Добрый Яблоко 2л',
+    goodPrice: 102.99,
+    numberOfGoods: 13,
+    imageOfGoods: './icon/juice.jpeg'
+  }
 ]
 
 //объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
@@ -131,7 +166,6 @@ var users = [
 
 //объект для хранения токена сессии и idDB пользователя
 var sessions = {};
-var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8;
@@ -241,14 +275,25 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
+function changeMainScreenAmountGoods(e) {
+  if (e.deltaY > 75) {
+    if (mainScreenAmountGoods < goods.length) {
+      mainScreenAmountGoods = mainScreenAmountGoods + 4;
+      console.log(mainScreenAmountGoods);
+      //setTimeout(addProductGridGeneration, 1000, mainScreenAmountGoods);
+      addProductGridGeneration(mainScreenAmountGoods);
+    };
+  };
+};
+//генерация начальной товарной сетки
 function productGridGeneration(mainScreenAmountGoods) {
   var rowContentGrid = document.querySelector('.content-grid');
-  
+
   for (var i = 0; i < mainScreenAmountGoods; i++) {
     var divCol = document.createElement('div');
     divCol.className = "col-md-3 content-item";
     rowContentGrid.appendChild(divCol);
-    
+
     var divWrap = document.createElement('div');
     divWrap.className = "item-wrapper my-3";
     divCol.appendChild(divWrap);
@@ -281,7 +326,7 @@ function productGridGeneration(mainScreenAmountGoods) {
 
     var spanPriceRub = document.createElement('span');
     spanPriceRub.className = "item-price";
-    spanPriceRub.innerHTML =  Math.trunc(goods[i].goodPrice) + 'р.';
+    spanPriceRub.innerHTML = Math.trunc(goods[i].goodPrice) + 'р.';
     divColPrice.appendChild(spanPriceRub);
 
     var supPriceKop = document.createElement('sup');
@@ -306,8 +351,78 @@ function productGridGeneration(mainScreenAmountGoods) {
     iTag.className = "fas fa-shopping-cart";
     iTag.setAttribute("aria-hidden", true);
     buttonBuy.appendChild(iTag);
-  }
-}
+  };
+};
+//генерация добавляющейся товарной сетки
+function addProductGridGeneration(mainScreenAmountGoods) {
+  var rowContentGrid = document.querySelector('.content-grid');
+
+  for (var i = mainScreenAmountGoods - 4; i < mainScreenAmountGoods; i++) {
+    var divCol = document.createElement('div');
+    divCol.className = "col-md-3 content-item";
+    rowContentGrid.appendChild(divCol);
+
+    var divWrap = document.createElement('div');
+    divWrap.className = "item-wrapper my-3";
+    divCol.appendChild(divWrap);
+
+    var divItemImage = document.createElement('div');
+    divItemImage.className = "item-image";
+    divWrap.appendChild(divItemImage);
+
+    var itemImage = document.createElement('img');
+    itemImage.className = "mx-auto d-block";
+    itemImage.setAttribute("src", goods[i].imageOfGoods);
+    divItemImage.appendChild(itemImage);
+
+    var divFluid = document.createElement('div');
+    divFluid.className = "container-fluid";
+    divWrap.appendChild(divFluid);
+
+    var itemTitle = document.createElement('h5');
+    itemTitle.className = "item-title text-center";
+    itemTitle.innerHTML = goods[i].goodsName;
+    divFluid.appendChild(itemTitle);
+
+    var divRowPriceAndBuy = document.createElement('div');
+    divRowPriceAndBuy.className = "row no-gutters";
+    divFluid.appendChild(divRowPriceAndBuy);
+
+    var divColPrice = document.createElement('div');
+    divColPrice.className = "col-6";
+    divRowPriceAndBuy.appendChild(divColPrice);
+
+    var spanPriceRub = document.createElement('span');
+    spanPriceRub.className = "item-price";
+    spanPriceRub.innerHTML = Math.trunc(goods[i].goodPrice) + 'р.';
+    divColPrice.appendChild(spanPriceRub);
+
+    var supPriceKop = document.createElement('sup');
+    supPriceKop.innerHTML = Number(String(goods[i].goodPrice).split('.')[1] || 0) + 'коп.';
+    divColPrice.appendChild(supPriceKop);
+
+    var divWrapColButtonToCart = document.createElement('div');
+    divWrapColButtonToCart.className = "col-6";
+    divRowPriceAndBuy.appendChild(divWrapColButtonToCart);
+
+    var divColButtonToCart = document.createElement('div');
+    divColButtonToCart.className = "item-actions";
+    divWrapColButtonToCart.appendChild(divColButtonToCart);
+
+    var buttonBuy = document.createElement('button');
+    buttonBuy.className = "btn btn-outline-success my-2 my-sm-0 add_item";
+    buttonBuy.setAttribute("data-id", goods[i].id);
+    buttonBuy.innerHTML = "В корзину";
+    divColButtonToCart.appendChild(buttonBuy);
+
+    var iTag = document.createElement('i');
+    iTag.className = "fas fa-shopping-cart";
+    iTag.setAttribute("aria-hidden", true);
+    buttonBuy.appendChild(iTag);
+
+    listenerForButtonsBuy();
+  };
+};
 
 //кроссбраузерный обработчик событий
 function addEvent(elem, type, handler) {
@@ -317,6 +432,15 @@ function addEvent(elem, type, handler) {
     elem.attachEvent('on' + type, function () { handler.call(elem); });
   }
   return false;
+};
+
+//слушатель для каждой кнопки "В корзину" на странице
+function listenerForButtonsBuy() {
+  var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
+  //console.log(contentItems);
+  for (var i = 0; i < contentItems.length; i++) {
+    addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
+  };
 };
 
 //добавляет товар в промежуточную корзину
@@ -643,11 +767,12 @@ function renderTotalAmountAndPriceMainPage() {
   elemAmountMainPage.innerHTML = totlaAmount;
   elemPriceMainPageRUB.innerHTML = ModalCartTotalPriceRUB;
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
-}
-
-//вызываем слушателя для каждой кнопки "В корзину" на странице
-for (var i = 0; i < contentItems.length; i++) {
-  addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
 };
 
 productGridGeneration(mainScreenAmountGoods);
+listenerForButtonsBuy();
+
+//слушатель на прокрутку на сетке товаров
+addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
+
+
