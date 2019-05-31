@@ -351,6 +351,8 @@ function productGridGeneration(mainScreenAmountGoods) {
     iTag.className = "fas fa-shopping-cart";
     iTag.setAttribute("aria-hidden", true);
     buttonBuy.appendChild(iTag);
+
+    listenerForButtonsBuy();
   };
 };
 //генерация добавляющейся товарной сетки
@@ -424,6 +426,15 @@ function addProductGridGeneration(mainScreenAmountGoods) {
   };
 };
 
+//слушатель для каждой кнопки "В корзину" на странице
+function listenerForButtonsBuy() {
+  var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
+  //console.log(contentItems);
+  for (var i = 0; i < contentItems.length; i++) {
+    addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
+  };
+};
+
 //кроссбраузерный обработчик событий
 function addEvent(elem, type, handler) {
   if (elem.addEventListener) {
@@ -434,188 +445,183 @@ function addEvent(elem, type, handler) {
   return false;
 };
 
-//слушатель для каждой кнопки "В корзину" на странице
-function listenerForButtonsBuy() {
-  var contentItems = document.querySelectorAll('.content-item'); //все элементы товаров
-  //console.log(contentItems);
-  for (var i = 0; i < contentItems.length; i++) {
-    addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
-  };
-};
-
 //добавляет товар в промежуточную корзину
 function addToCart(e) {
 
   var itemId = this.getAttribute('data-id'); // ID товара
 
   for (var i = 0; i < cart.length; i++) {
-    for (var key in cart[i]) {
-      if (cart[i][key] == itemId) return;
-    };
+    if (cart[i].id == itemId) return;
   };
   //теперь, получив itemID перебираем массив goods и, если находим нужный нам объект, то передаем его в корзину
   for (var i = 0; i < goods.length; i++) {
-    for (var key in goods[i]) {
-      if (goods[i][key] == itemId) {
-        cart.push(goods[i]);
-      };
+    if (goods[i].id == itemId) {
+      cart.push(goods[i]);
+      cartRender(itemId);
     };
   };
   //console.log(cart);
-  //а теперь вызываем функцию для отрисовки корзины
-  cartRender();
+  //а теперь вызываем функцию для отрисовки корзины  
   calculateTotalPrice();
 };
 
 //функция для отрисовки корзины
-function cartRender() {
-  //console.log(cart[0].imageOfGoods); 
-  //console.log(cart.length);  
-  //очистим ранее отрисованную корзину
-  cartItem.innerHTML = '';
-
+function cartRender(itemId) {
+  var indexItem;
   for (var i = 0; i < cart.length; i++) {
-    // создаем div для row и вставляем его в сущность корзины
-    var divRow = document.createElement('div');
-    divRow.className = "row no-gutters";
-    cartItem.appendChild(divRow);
-    //в divRow добавляем divColImage для изображения товара
-    var divColImage = document.createElement('div');
-    divColImage.className = "col-2";
-    divRow.appendChild(divColImage);
-    //в divColImage вставляем divItemImage
-    var divItemImage = document.createElement('div');
-    divItemImage.className = "item-image";
-    divColImage.appendChild(divItemImage);
-    //в divItemImage вставляем саму картинку
-    var imgProduct = document.createElement('img');
-    imgProduct.className = "mx-auto d-block";
-    imgProduct.setAttribute("src", cart[i].imageOfGoods);
-    divItemImage.appendChild(imgProduct);
-    //console.log(cart[i].imageOfGoods);
-
-    //в divRow добавляем divColName для наименования и описания товара
-    var divColName = document.createElement('div');
-    divColName.className = "col-3";
-    divRow.appendChild(divColName);
-    //в divColName вставляем абзац с наименованием и описанием товара
-    var pName = document.createElement('p');
-    pName.className = "item-title text-left";
-    pName.innerHTML = cart[i].goodsName;
-    divColName.appendChild(pName);
-
-    //в divRow добавляем divColPriceForPiece 
-    var divColPriceForPiece = document.createElement('div');
-    divColPriceForPiece.className = "col-2";
-    divRow.appendChild(divColPriceForPiece);
-    //в divColPriceForPiece вставляем divPriceForPiece
-    var divPriceForPiece = document.createElement('div');
-    divPriceForPiece.className = "item-price";
-    divColPriceForPiece.appendChild(divPriceForPiece);
-    //в divColPriceForPiece добавляем специальный тег для отображения РУБЛЕЙ
-    var pDivPriceForPiece = document.createElement('span');
-    pDivPriceForPiece.innerHTML = Math.trunc(cart[i].goodPrice) + 'р.';
-    divPriceForPiece.appendChild(pDivPriceForPiece);
-    //в divColPriceForPiece добавляем специальный тег для отображения КОПЕЕК
-    var supIndex = document.createElement('sup');
-    supIndex.innerHTML = Number(String(cart[i].goodPrice).split('.')[1] || 0) + 'коп.';
-    divPriceForPiece.appendChild(supIndex);
-
-    //в divRow добавляем divColNumber для уменьшения/увеличения кол-во одного продукта
-    var divColNumber = document.createElement('div');
-    divColNumber.className = "col-2";
-    divRow.appendChild(divColNumber);
-    //в divColNumber добавляем контейнер-обертку divContainer
-    var divContainer = document.createElement('div');
-    divContainer.className = "container-fluid";
-    divColNumber.appendChild(divContainer);
-    //в divContainer добавляем свою строку divRawNumber
-    var divRawNumber = document.createElement('div');
-    divRawNumber.className = "row no-gutters";
-    divContainer.appendChild(divRawNumber);
-
-    //в divRawNumber добавляем divColButtonDecrease
-    var divColButtonDecrease = document.createElement('div');
-    divColButtonDecrease.className = "col-2 mx-auto";
-    divRawNumber.appendChild(divColButtonDecrease);
-    //в divColButtonDecrease добавляем кнопку для уменьшения количества товара
-    var buttonDecrease = document.createElement('button');
-    buttonDecrease.setAttribute("type", "button");
-    buttonDecrease.className = "btn btn-outline-primary btn-sm decrease-amount-product";
-    buttonDecrease.innerHTML = '-';
-    divColButtonDecrease.appendChild(buttonDecrease);
-
-    //в divRawNumber добавляем divColValueOfProduct
-    var divColValueOfProduct = document.createElement('div');
-    divColValueOfProduct.className = "col-8 mx-auto text-center";
-    divRawNumber.appendChild(divColValueOfProduct);
-    //в divColValueOfProduct добавляем абзац с количеством товара в корзине
-    var ValueOfProduct = document.createElement('p');
-    ValueOfProduct.className = "text-center present-amount";
-    ValueOfProduct.setAttribute("id", "present-amount-of-a-product");
-    ValueOfProduct.setAttribute("data-id", cart[i].id);
-    ValueOfProduct.innerHTML = 1;
-    divColValueOfProduct.appendChild(ValueOfProduct);
-
-    //в divRawNumber добавляем divColButtonIncrease
-    var divColButtonIncrease = document.createElement('div');
-    divColButtonIncrease.className = "col-2 mx-auto";
-    divRawNumber.appendChild(divColButtonIncrease);
-    //в divColButtonIncrease добавляем кнопку для увеличения количества товара
-    var buttonIncrease = document.createElement('button');
-    buttonIncrease.setAttribute("type", "button");
-    buttonIncrease.className = "btn btn-outline-primary btn-sm increase-amount-product";
-    buttonIncrease.innerHTML = '+';
-    divColButtonIncrease.appendChild(buttonIncrease);
-
-    //в divRow добавляем divColTotalPriceForSuchAProduct 
-    var divColTotalPriceForSuchAProduct = document.createElement('div');
-    divColTotalPriceForSuchAProduct.className = "col-2";
-    divRow.appendChild(divColTotalPriceForSuchAProduct);
-    //в divColTotalPriceForSuchAProduct добавляем divTotalPriceForSuchAProduct
-    var divTotalPriceForSuchAProduct = document.createElement('div');
-    divTotalPriceForSuchAProduct.className = "item-price-total text-center";
-    divColTotalPriceForSuchAProduct.appendChild(divTotalPriceForSuchAProduct)
-    //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
-    var TotalPriceForSuchAProduct = document.createElement('span');
-    TotalPriceForSuchAProduct.innerHTML = Math.trunc(cart[i].goodPrice * ValueOfProduct.innerHTML) + 'р.';
-    divTotalPriceForSuchAProduct.appendChild(TotalPriceForSuchAProduct);
-    //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
-    var supIndexTotal = document.createElement('sup');
-    supIndexTotal.innerHTML = Number(String(cart[i].goodPrice * ValueOfProduct.innerHTML).split('.')[1] || 0) + 'коп.';
-    divTotalPriceForSuchAProduct.appendChild(supIndexTotal);
-
-    //в divRow добавляем divColDeleteProduct для удаления товара из корзины
-    var divColDeleteProduct = document.createElement('div');
-    divColDeleteProduct.className = "col-1";
-    divRow.appendChild(divColDeleteProduct);
-    //в divColDeleteProduct добавляем кнопку для удаления товара
-    var buttonDeleteProduct = document.createElement('button');
-    buttonDeleteProduct.setAttribute("type", "button");
-    buttonDeleteProduct.setAttribute("data-id", cart[i].id);
-    buttonDeleteProduct.className = "close";
-    divColDeleteProduct.appendChild(buttonDeleteProduct);
-    //внутрь кнопки buttonDeleteProduct добавляем span
-    var spanX = document.createElement('span');
-    spanX.setAttribute("aria-hidden", "btrue");
-    spanX.innerHTML = '×';
-    buttonDeleteProduct.appendChild(spanX);
+    if (cart[i].id = itemId) {
+      indexItem = i;
+    };
   };
+  //console.log(indexItem);
+  // создаем div для row и вставляем его в сущность корзины
+  var divRow = document.createElement('div');
+  divRow.className = "row no-gutters string";
+  cartItem.appendChild(divRow);
+  //в divRow добавляем divColImage для изображения товара
+  var divColImage = document.createElement('div');
+  divColImage.className = "col-2";
+  divRow.appendChild(divColImage);
+  //в divColImage вставляем divItemImage
+  var divItemImage = document.createElement('div');
+  divItemImage.className = "item-image";
+  divColImage.appendChild(divItemImage);
+  //в divItemImage вставляем саму картинку
+  var imgProduct = document.createElement('img');
+  imgProduct.className = "mx-auto d-block";
+  imgProduct.setAttribute("src", cart[indexItem].imageOfGoods);
+  divItemImage.appendChild(imgProduct);
 
+  //в divRow добавляем divColName для наименования и описания товара
+  var divColName = document.createElement('div');
+  divColName.className = "col-3";
+  divRow.appendChild(divColName);
+  //в divColName вставляем абзац с наименованием и описанием товара
+  var pName = document.createElement('p');
+  pName.className = "item-title text-left";
+  pName.innerHTML = cart[indexItem].goodsName;
+  divColName.appendChild(pName);
+
+  //в divRow добавляем divColPriceForPiece 
+  var divColPriceForPiece = document.createElement('div');
+  divColPriceForPiece.className = "col-2";
+  divRow.appendChild(divColPriceForPiece);
+  //в divColPriceForPiece вставляем divPriceForPiece
+  var divPriceForPiece = document.createElement('div');
+  divPriceForPiece.className = "item-price";
+  divColPriceForPiece.appendChild(divPriceForPiece);
+  //в divColPriceForPiece добавляем специальный тег для отображения РУБЛЕЙ
+  var pDivPriceForPiece = document.createElement('span');
+  pDivPriceForPiece.innerHTML = Math.trunc(cart[indexItem].goodPrice) + 'р.';
+  divPriceForPiece.appendChild(pDivPriceForPiece);
+  //в divColPriceForPiece добавляем специальный тег для отображения КОПЕЕК
+  var supIndex = document.createElement('sup');
+  supIndex.innerHTML = Number(String(cart[indexItem].goodPrice).split('.')[1]) + 'коп.';
+  divPriceForPiece.appendChild(supIndex);
+
+  //в divRow добавляем divColNumber для уменьшения/увеличения кол-во одного продукта
+  var divColNumber = document.createElement('div');
+  divColNumber.className = "col-2";
+  divRow.appendChild(divColNumber);
+  //в divColNumber добавляем контейнер-обертку divContainer
+  var divContainer = document.createElement('div');
+  divContainer.className = "container-fluid";
+  divColNumber.appendChild(divContainer);
+  //в divContainer добавляем свою строку divRawNumber
+  var divRawNumber = document.createElement('div');
+  divRawNumber.className = "row no-gutters";
+  divContainer.appendChild(divRawNumber);
+
+  //в divRawNumber добавляем divColButtonDecrease
+  var divColButtonDecrease = document.createElement('div');
+  divColButtonDecrease.className = "col-2 mx-auto";
+  divRawNumber.appendChild(divColButtonDecrease);
+  //в divColButtonDecrease добавляем кнопку для уменьшения количества товара
+  var buttonDecrease = document.createElement('button');
+  buttonDecrease.setAttribute("type", "button");
+  buttonDecrease.className = "btn btn-outline-primary btn-sm decrease-amount-product";
+  buttonDecrease.innerHTML = '-';
+  divColButtonDecrease.appendChild(buttonDecrease);
+
+  //в divRawNumber добавляем divColValueOfProduct
+  var divColValueOfProduct = document.createElement('div');
+  divColValueOfProduct.className = "col-8 mx-auto text-center";
+  divRawNumber.appendChild(divColValueOfProduct);
+  //в divColValueOfProduct добавляем абзац с количеством товара в корзине
+  var ValueOfProduct = document.createElement('p');
+  ValueOfProduct.className = "text-center present-amount";
+  ValueOfProduct.setAttribute("id", "present-amount-of-a-product");
+  ValueOfProduct.setAttribute("data-id", cart[indexItem].id);
+  ValueOfProduct.innerHTML = 1;
+  divColValueOfProduct.appendChild(ValueOfProduct);
+
+  //в divRawNumber добавляем divColButtonIncrease
+  var divColButtonIncrease = document.createElement('div');
+  divColButtonIncrease.className = "col-2 mx-auto";
+  divRawNumber.appendChild(divColButtonIncrease);
+  //в divColButtonIncrease добавляем кнопку для увеличения количества товара
+  var buttonIncrease = document.createElement('button');
+  buttonIncrease.setAttribute("type", "button");
+  buttonIncrease.className = "btn btn-outline-primary btn-sm increase-amount-product";
+  buttonIncrease.innerHTML = '+';
+  divColButtonIncrease.appendChild(buttonIncrease);
+
+  //в divRow добавляем divColTotalPriceForSuchAProduct 
+  var divColTotalPriceForSuchAProduct = document.createElement('div');
+  divColTotalPriceForSuchAProduct.className = "col-2";
+  divRow.appendChild(divColTotalPriceForSuchAProduct);
+  //в divColTotalPriceForSuchAProduct добавляем divTotalPriceForSuchAProduct
+  var divTotalPriceForSuchAProduct = document.createElement('div');
+  divTotalPriceForSuchAProduct.className = "item-price-total text-center";
+  divColTotalPriceForSuchAProduct.appendChild(divTotalPriceForSuchAProduct)
+  //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы РУБЛЕЙ
+  var TotalPriceForSuchAProduct = document.createElement('span');
+  TotalPriceForSuchAProduct.innerHTML = Math.trunc(cart[indexItem].goodPrice) + 'р.';
+  divTotalPriceForSuchAProduct.appendChild(TotalPriceForSuchAProduct);
+  //в divTotalPriceForSuchAProduct добавим sup для отображения общей суммы КОПЕЕК
+  var supIndexTotal = document.createElement('sup');
+  supIndexTotal.innerHTML = Number(String(cart[indexItem].goodPrice).split('.')[1]) + 'коп.';
+  divTotalPriceForSuchAProduct.appendChild(supIndexTotal);
+
+  //в divRow добавляем divColDeleteProduct для удаления товара из корзины
+  var divColDeleteProduct = document.createElement('div');
+  divColDeleteProduct.className = "col-1";
+  divRow.appendChild(divColDeleteProduct);
+  //в divColDeleteProduct добавляем кнопку для удаления товара
+  var buttonDeleteProduct = document.createElement('button');
+  buttonDeleteProduct.setAttribute("type", "button");
+  buttonDeleteProduct.setAttribute("data-id", cart[indexItem].id);
+  buttonDeleteProduct.className = "close";
+  divColDeleteProduct.appendChild(buttonDeleteProduct);
+  //внутрь кнопки buttonDeleteProduct добавляем span
+  var spanX = document.createElement('span');
+  spanX.setAttribute("aria-hidden", "btrue");
+  spanX.innerHTML = '×';
+  buttonDeleteProduct.appendChild(spanX);
+
+  listenerChangeAmountProductInCart();
+  listenerDeleteProductFromCart();
+};
+
+//слушатель для изменения количества товара в корзине
+function listenerChangeAmountProductInCart() {
   var decreaseProductButtons = document.querySelectorAll('.decrease-amount-product'); //все кнопки уменьшить кол-во товара в корзине
   for (var i = 0; i < decreaseProductButtons.length; i++) {
     addEvent(decreaseProductButtons[i], 'click', decreaseProductAmountInCart);
     addEvent(decreaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
-    addEvent(decreaseProductButtons[i], 'click', calculateTotalPrice);
+    //addEvent(decreaseProductButtons[i], 'click', calculateTotalPrice);
   };
 
   var increaseProductButtons = document.querySelectorAll('.increase-amount-product'); //все кнопки уменьшить кол-во товара в корзине
   for (var i = 0; i < increaseProductButtons.length; i++) {
     addEvent(increaseProductButtons[i], 'click', increaseProductAmountInCart);
     addEvent(increaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
-    addEvent(increaseProductButtons[i], 'click', calculateTotalPrice);
+    //addEvent(increaseProductButtons[i], 'click', calculateTotalPrice);
   };
+};
 
+//слушатель для удаления товара из корзины
+function listenerDeleteProductFromCart() {
   var deleteProductButton = document.querySelectorAll('.close'); //все кнопки удаления товара
   for (var i = 0; i < deleteProductButton.length; i++) {
     addEvent(deleteProductButton[i], 'click', deleteProduct);
@@ -637,17 +643,18 @@ function increaseProductAmountInCart(e) {
   var closestRow = this.closest('.row');
   var elemContentAmount = closestRow.getElementsByTagName('p');
   var presentValueOfProduct = elemContentAmount[0].innerHTML;
+  console.log(presentValueOfProduct);
   var idProduct = elemContentAmount[0].getAttribute('data-id');
   var tempObjProduct = {};
   for (var i = 0; i < goods.length; i++) {
-    for (var key in goods[i]) {
-      if (goods[i][key] == idProduct) {
+      if (goods[i].id == idProduct) {
         tempObjProduct = goods[i];
-      };
+        console.log(tempObjProduct);
     };
   };
   if (+presentValueOfProduct < tempObjProduct.numberOfGoods) {
     elemContentAmount[0].innerHTML = +presentValueOfProduct + 1;
+    console.log(elemContentAmount[0].innerHTML = +presentValueOfProduct + 1);
   };
 };
 
@@ -669,26 +676,26 @@ function changeTotalPriceForSuchAProduct(e) {
   elemTotalPriceFotSuchProduct.innerHTML = '';
   var priceForPiece = tempObjProduct.goodPrice;
   var presentValueOfProduct = elemContentAmount[0].innerHTML;
-  var TotalPriceFor = +priceForPiece * presentValueOfProduct;
+  var TotalPriceFor = (((+priceForPiece * 100) * +presentValueOfProduct)/100).toFixed(2);
   var pIndexTotal = document.createElement('span');
   pIndexTotal.innerHTML = Math.trunc(TotalPriceFor) + 'р.';
   elemTotalPriceFotSuchProduct.appendChild(pIndexTotal);
   var supIndexTotal = document.createElement('sup');
-  supIndexTotal.innerHTML = Number(String((TotalPriceFor).toFixed(2)).split('.')[1] || 0) + 'коп.';
+  supIndexTotal.innerHTML = Math.trunc((Number(String(TotalPriceFor).split('.')[1])).toFixed(2)) + 'коп.';
   elemTotalPriceFotSuchProduct.appendChild(supIndexTotal);
 };
 
 function deleteProduct(e) {
   var removeProductID = this.getAttribute('data-id');
   for (var i = 0; i < cart.length; i++) {
-    for (var key in cart[i]) {
-      if (cart[i][key] == removeProductID) {
-        cart.splice(i, 1);
-        break
-      };
+    if (cart[i].id == removeProductID) {
+      cart.splice(i, 1);
+      break
     };
   };
-  cartRender();
+  var elem = this.closest('.string');
+  elem.remove();
+  //console.log(elem);
   calculateTotalPrice();
 };
 
@@ -740,7 +747,7 @@ function calculateTotalPrice() {
   //вставим копейки
   var totalCOP = document.createElement('sup');
   totalCOP.setAttribute('id', 'total-COP');
-  totalCOP.innerHTML = Number(String(totalPrice).split('.')[1] || 0) + 'коп.';
+  totalCOP.innerHTML =  Math.trunc((Number(String(totalPrice).split('.')[1] || 0)).toFixed(2)) + 'коп.';
   bold.appendChild(totalCOP);
 
   renderTotalAmountAndPriceMainPage();
@@ -770,7 +777,6 @@ function renderTotalAmountAndPriceMainPage() {
 };
 
 productGridGeneration(mainScreenAmountGoods);
-listenerForButtonsBuy();
 
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
