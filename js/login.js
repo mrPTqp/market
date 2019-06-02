@@ -247,14 +247,14 @@ function controlCookiesAndSessions() {
   //записывает полученный токен в sessions
   function setSessions(token) {
     sessions.idDB = token;
-    console.log(sessions);
+    //console.log(sessions);
   }
 
   //записывает токен и email пользователя в куки
   function setCookie(userIdDB, token) {
     Cookies.set('id', userIdDB, { expires: 365 });
     Cookies.set('sessionID', token, { expires: 365 });
-    console.log(document.cookie);
+    //console.log(document.cookie);
   }
 
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
@@ -449,15 +449,23 @@ function addEvent(elem, type, handler) {
 function addToCart(e) {
 
   var itemId = this.getAttribute('data-id'); // ID товара
+  var marker = false; //маркер наличия товара в cart
 
+  //проверяет есть ли товар в корзине
   for (var i = 0; i < cart.length; i++) {
-    if (cart[i].id == itemId) return;
+    if (cart[i].id != itemId) {
+      marker = false;
+    } else {
+      marker = true;
+    };
   };
-  //теперь, получив itemID перебираем массив goods и, если находим нужный нам объект, то передаем его в корзину
-  for (var i = 0; i < goods.length; i++) {
-    if (goods[i].id == itemId) {
-      cart.push(goods[i]);
-      cartRender(itemId);
+  //если маркер говорит, что товара в корзине не, то получив itemID перебираем массив goods и, если находим нужный нам объект, то передаем его в корзину
+  if (!marker) {
+    for (var j = 0; j < goods.length; j++) {
+      if (goods[j].id == itemId) {
+        cart.push(goods[j]);
+        cartRender(itemId);
+      };
     };
   };
   //console.log(cart);
@@ -469,7 +477,7 @@ function addToCart(e) {
 function cartRender(itemId) {
   var indexItem;
   for (var i = 0; i < cart.length; i++) {
-    if (cart[i].id = itemId) {
+    if (cart[i].id == itemId) {
       indexItem = i;
     };
   };
@@ -609,14 +617,14 @@ function listenerChangeAmountProductInCart() {
   for (var i = 0; i < decreaseProductButtons.length; i++) {
     addEvent(decreaseProductButtons[i], 'click', decreaseProductAmountInCart);
     addEvent(decreaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
-    //addEvent(decreaseProductButtons[i], 'click', calculateTotalPrice);
+    addEvent(decreaseProductButtons[i], 'click', calculateTotalPrice);
   };
 
   var increaseProductButtons = document.querySelectorAll('.increase-amount-product'); //все кнопки уменьшить кол-во товара в корзине
   for (var i = 0; i < increaseProductButtons.length; i++) {
     addEvent(increaseProductButtons[i], 'click', increaseProductAmountInCart);
     addEvent(increaseProductButtons[i], 'click', changeTotalPriceForSuchAProduct);
-    //addEvent(increaseProductButtons[i], 'click', calculateTotalPrice);
+    addEvent(increaseProductButtons[i], 'click', calculateTotalPrice);
   };
 };
 
@@ -643,40 +651,43 @@ function increaseProductAmountInCart(e) {
   var closestRow = this.closest('.row');
   var elemContentAmount = closestRow.getElementsByTagName('p');
   var presentValueOfProduct = elemContentAmount[0].innerHTML;
-  console.log(presentValueOfProduct);
+  //console.log(presentValueOfProduct);
   var idProduct = elemContentAmount[0].getAttribute('data-id');
   var tempObjProduct = {};
   for (var i = 0; i < goods.length; i++) {
-      if (goods[i].id == idProduct) {
-        tempObjProduct = goods[i];
-        console.log(tempObjProduct);
+    if (goods[i].id == idProduct) {
+      tempObjProduct = goods[i];
+      //console.log(tempObjProduct);
     };
   };
   if (+presentValueOfProduct < tempObjProduct.numberOfGoods) {
     elemContentAmount[0].innerHTML = +presentValueOfProduct + 1;
-    console.log(elemContentAmount[0].innerHTML = +presentValueOfProduct + 1);
+    //console.log(elemContentAmount[0].innerHTML = +presentValueOfProduct + 1);
   };
 };
 
 function changeTotalPriceForSuchAProduct(e) {
+  //console.log(goods[0].id);
   var closestRow = this.closest('.row');
   var elemContentAmount = closestRow.getElementsByTagName('p');
   var parentOfRow = closestRow.parentNode;
   var secondRow = parentOfRow.closest('.row');
   var elemTotalPriceFotSuchProduct = secondRow.getElementsByClassName('item-price-total')[0];
   var idProduct = elemContentAmount[0].getAttribute('data-id');
-  var tempObjProduct = {};
+  //console.log(idProduct);
+  var tempObjProduct;
   for (var i = 0; i < goods.length; i++) {
-    for (var key in goods[i]) {
-      if (goods[i][key] == idProduct) {
-        tempObjProduct = goods[i];
-      };
+    //console.log(goods[i]);
+    if (goods[i].id == idProduct) {
+      tempObjProduct = goods[i];
     };
   };
   elemTotalPriceFotSuchProduct.innerHTML = '';
+  //console.log(elemTotalPriceFotSuchProduct.innerHTML);
   var priceForPiece = tempObjProduct.goodPrice;
+  //console.log(priceForPiece);
   var presentValueOfProduct = elemContentAmount[0].innerHTML;
-  var TotalPriceFor = (((+priceForPiece * 100) * +presentValueOfProduct)/100).toFixed(2);
+  var TotalPriceFor = (((+priceForPiece * 100) * +presentValueOfProduct) / 100).toFixed(2);
   var pIndexTotal = document.createElement('span');
   pIndexTotal.innerHTML = Math.trunc(TotalPriceFor) + 'р.';
   elemTotalPriceFotSuchProduct.appendChild(pIndexTotal);
@@ -704,7 +715,7 @@ function calculateTotalPrice() {
   var elemsItemPriceTotal = document.getElementsByClassName('item-price-total'); //элементы с итоговой ценой позиции
   var itemPriceTotalRUB = [];
   var itemPriceTotalCOP = [];
-  var totalPrice = 0;
+  var totalPriceNoFixed = 0;
 
   //сформируем массив с рублями и копейками от каждого продукта в корзине
   for (var i = 0; i < elemsItemPriceTotal.length; i++) {
@@ -727,10 +738,11 @@ function calculateTotalPrice() {
   for (var i = 0; i < itemPriceTotalRUB.length; i++) {
     var RUB = itemPriceTotalRUB[i];
     var COP = itemPriceTotalCOP[i];
-    totalPrice += Number(+(RUB + '.' + COP));
+    totalPriceNoFixed += Number(+(RUB + '.' + COP));
+    var totalPrice = totalPriceNoFixed.toFixed(2);
     //console.log(totalPrice);
   };
-  //console.log(totalPrice);
+  console.log(totalPrice);
 
   //обнулим содержимое того дива, в котором сейчас указана общая цена
   elemTotalPrice.innerHTML = '';
@@ -747,7 +759,7 @@ function calculateTotalPrice() {
   //вставим копейки
   var totalCOP = document.createElement('sup');
   totalCOP.setAttribute('id', 'total-COP');
-  totalCOP.innerHTML =  Math.trunc((Number(String(totalPrice).split('.')[1] || 0)).toFixed(2)) + 'коп.';
+  totalCOP.innerHTML = Math.trunc((Number(String(totalPrice).split('.')[1])).toFixed(2)) + 'коп.';
   bold.appendChild(totalCOP);
 
   renderTotalAmountAndPriceMainPage();
