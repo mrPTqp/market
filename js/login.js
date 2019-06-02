@@ -149,7 +149,8 @@ var goods = [
     imageOfGoods: './icon/juice.jpeg'
   }
 ]
-
+var JSONgoods = JSON.stringify(goods);
+console.log(JSONgoods);
 //объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
 var users = [
   {
