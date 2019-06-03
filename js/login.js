@@ -164,13 +164,15 @@ var users = [
     moneyBalanceDB: 3333
   }
 ]
-
+//var JSONusers = JSON.stringify(users);
+//console.log(JSONusers);
 var sessions = {}; //объект для хранения токена сессии и idDB пользователя
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
 var previouslyMainScreenAmountGoods = 8; //а эта для фиксации разницы в количестве отрисованных товаров
 var goodsFromServer; //переменная для сохранения перечня товаров, полученного с сервера
+var usersFromServer; //переменная для сохранения перечня пользователей, полученного с сервера
 
 //запрос продуктов с сервера
 function XHRforGoods() {
@@ -184,6 +186,21 @@ function XHRforGoods() {
   } else {
     goodsFromServer = JSON.parse(getGoodsFromServer.responseText); // пропарсенный массив объектов с сервера 
     //console.log(goodsFromServer);
+  };
+};
+
+//запрос пользователей с сервера
+function XHRforUsers() {
+  var getUserssFromServer = new XMLHttpRequest();
+  var URL = 'http://mrptqp.mocklab.io/users';
+  getUserssFromServer.open('GET', URL, false);
+  getUserssFromServer.send();
+  if (getUserssFromServer.status != 200) {
+    // обработать ошибку
+    alert(getUserssFromServer.status + ': ' + getUserssFromServer.statusText); // пример вывода: 404: Not Found
+  } else {
+    usersFromServer = JSON.parse(getUserssFromServer.responseText); // пропарсенный массив объектов с сервера 
+    //console.log(usersFromServer);
   };
 };
 
@@ -242,16 +259,19 @@ function controlCookiesAndSessions() {
 
   //функция сравнивает введенные логин и пароль с базой данных (users)
   function authentication(email, password) {
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].idDB == email && users[i].passwordDB == password) {
+    var a = 0; //метка, говорящая о том, прошел ли кто-то аутентификацию
+    for (var i = 0; i < usersFromServer.length; i++) {
+      if (usersFromServer[i].idDB == email && usersFromServer[i].passwordDB == password) {
         generateToken(email, password);
         replaceAuthenticationFormToGreeting();
-      }
-    }
-    if (!sessions.idDB) {
-      alert('Ошибка при вводе email или пароль. Попробуйте еще раз')
+        a = 1;
+      };
     };
-  }
+    if (!a) {
+      alert('Ошибка при вводе email или пароль. Попробуйте еще раз');
+      a = 0;
+    };
+  };
 
   //генерирует на основе достоверных email и password токен для sessionID
   function generateToken(email, password) {
@@ -260,20 +280,20 @@ function controlCookiesAndSessions() {
 
     setSessions(token);
     setCookie(email, token);
-  }
+  };
 
   //записывает полученный токен в sessions
   function setSessions(token) {
     sessions.idDB = token;
     //console.log(sessions);
-  }
+  };
 
   //записывает токен и email пользователя в куки
   function setCookie(userIdDB, token) {
     Cookies.set('id', userIdDB, { expires: 365 });
     Cookies.set('sessionID', token, { expires: 365 });
     //console.log(document.cookie);
-  }
+  };
 
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
   function replaceAuthenticationFormToGreeting() {
@@ -785,7 +805,7 @@ function calculateTotalPrice() {
     var totalPrice = totalPriceNoFixed.toFixed(2);
     //console.log(totalPrice);
   };
-  console.log(totalPrice);
+  //console.log(totalPrice);
 
   //обнулим содержимое того дива, в котором сейчас указана общая цена
   elemTotalPrice.innerHTML = '';
@@ -832,6 +852,7 @@ function renderTotalAmountAndPriceMainPage() {
 };
 
 XHRforGoods();
+XHRforUsers();
 
 productGridGeneration(mainScreenAmountGoods);
 
