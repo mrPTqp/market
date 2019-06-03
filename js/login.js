@@ -169,6 +169,7 @@ var sessions = {}; //объект для хранения токена сесс�
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
+var previouslyMainScreenAmountGoods = 8; //а эта для фиксации разницы в количестве отрисованных товаров
 var goodsFromServer; //переменная для сохранения перечня товаров, полученного с сервера
 
 //запрос продуктов с сервера
@@ -295,12 +296,34 @@ function deleteSessionIDfromCookie() {
 //изменяем количество товаров, отображаемое на главном экране, при прокрутке над сеткой товаров
 function changeMainScreenAmountGoods(e) {
   if (e.deltaY > 75) {
-    if (mainScreenAmountGoods < goodsFromServer.length) {
-      mainScreenAmountGoods = mainScreenAmountGoods + 4;
-      console.log(mainScreenAmountGoods);
-      //setTimeout(addProductGridGeneration, 1000, mainScreenAmountGoods);
-      addProductGridGeneration(mainScreenAmountGoods);
+    var a = goodsFromServer.length - mainScreenAmountGoods;
+    switch (a) {
+      case 0:
+        break;
+      case 1:
+        mainScreenAmountGoods = mainScreenAmountGoods + 1;
+        addProductGridGeneration(mainScreenAmountGoods);
+        break;
+      case 2:
+        mainScreenAmountGoods = mainScreenAmountGoods + 2;
+        addProductGridGeneration(mainScreenAmountGoods);
+        break;
+      case 3:
+        mainScreenAmountGoods = mainScreenAmountGoods + 3;
+        addProductGridGeneration(mainScreenAmountGoods);
+        break;
+      default:
+        mainScreenAmountGoods = mainScreenAmountGoods + 4;
+        addProductGridGeneration(mainScreenAmountGoods);
     };
+    /*
+        if (mainScreenAmountGoods < goodsFromServer.length) {
+          mainScreenAmountGoods = mainScreenAmountGoods + 4;
+          console.log(mainScreenAmountGoods);
+          //setTimeout(addProductGridGeneration, 1000, mainScreenAmountGoods);
+          addProductGridGeneration(mainScreenAmountGoods);
+        };
+    */
   };
 };
 
@@ -379,7 +402,8 @@ function productGridGeneration(mainScreenAmountGoods) {
 function addProductGridGeneration(mainScreenAmountGoods) {
   var rowContentGrid = document.querySelector('.content-grid');
 
-  for (var i = mainScreenAmountGoods - 4; i < mainScreenAmountGoods; i++) {
+
+  for (var i = previouslyMainScreenAmountGoods; i < mainScreenAmountGoods; i++) {
     var divCol = document.createElement('div');
     divCol.className = "col-md-3 content-item";
     rowContentGrid.appendChild(divCol);
@@ -444,6 +468,7 @@ function addProductGridGeneration(mainScreenAmountGoods) {
 
     listenerForButtonsBuy();
   };
+  previouslyMainScreenAmountGoods = mainScreenAmountGoods;
 };
 
 //слушатель для каждой кнопки "В корзину" на странице
