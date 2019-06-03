@@ -1,5 +1,5 @@
 "use strict";
-//для хранения товаров (вместо бэк-энда)
+//для хранения товаров (неиспользуемый, на случай если нет сервера)
 var goods = [
   {
     id: 100000001,
@@ -149,8 +149,8 @@ var goods = [
     imageOfGoods: './icon/juice.jpeg'
   }
 ]
-var JSONgoods = JSON.stringify(goods);
-console.log(JSONgoods);
+//var JSONgoods = JSON.stringify(goods);
+//console.log(JSONgoods);
 //объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
 var users = [
   {
@@ -165,11 +165,27 @@ var users = [
   }
 ]
 
-//объект для хранения токена сессии и idDB пользователя
-var sessions = {};
+var sessions = {}; //объект для хранения токена сессии и idDB пользователя
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
-var mainScreenAmountGoods = 8;
+var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
+var goodsFromServer; //переменная для сохранения перечня товаров, полученного с сервера
+
+//запрос продуктов с сервера
+function XHRforGoods() {
+  var getGoodsFromServer = new XMLHttpRequest();
+  var URL = 'http://mrptqp.mocklab.io/product/all';
+  getGoodsFromServer.open('GET', URL, false);
+  getGoodsFromServer.send();
+  if (getGoodsFromServer.status != 200) {
+    // обработать ошибку
+    alert(getGoodsFromServer.status + ': ' + getGoodsFromServer.statusText); // пример вывода: 404: Not Found
+  } else {
+    goodsFromServer = JSON.parse(getGoodsFromServer.responseText); // пропарсенный массив объектов с сервера 
+    //console.log(goodsFromServer);
+  };
+};
+
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
   var result = M(V(Y(X(d), 8 * d.length)));
@@ -276,9 +292,10 @@ function deleteSessionIDfromCookie() {
   console.log(document.cookie);
 };
 
+//изменяем количество товаров, отображаемое на главном экране, при прокрутке над сеткой товаров
 function changeMainScreenAmountGoods(e) {
   if (e.deltaY > 75) {
-    if (mainScreenAmountGoods < goods.length) {
+    if (mainScreenAmountGoods < goodsFromServer.length) {
       mainScreenAmountGoods = mainScreenAmountGoods + 4;
       console.log(mainScreenAmountGoods);
       //setTimeout(addProductGridGeneration, 1000, mainScreenAmountGoods);
@@ -286,6 +303,7 @@ function changeMainScreenAmountGoods(e) {
     };
   };
 };
+
 //генерация начальной товарной сетки
 function productGridGeneration(mainScreenAmountGoods) {
   var rowContentGrid = document.querySelector('.content-grid');
@@ -305,7 +323,7 @@ function productGridGeneration(mainScreenAmountGoods) {
 
     var itemImage = document.createElement('img');
     itemImage.className = "mx-auto d-block";
-    itemImage.setAttribute("src", goods[i].imageOfGoods);
+    itemImage.setAttribute("src", goodsFromServer[i].imageOfGoods);
     divItemImage.appendChild(itemImage);
 
     var divFluid = document.createElement('div');
@@ -314,7 +332,7 @@ function productGridGeneration(mainScreenAmountGoods) {
 
     var itemTitle = document.createElement('h5');
     itemTitle.className = "item-title text-center";
-    itemTitle.innerHTML = goods[i].goodsName;
+    itemTitle.innerHTML = goodsFromServer[i].goodsName;
     divFluid.appendChild(itemTitle);
 
     var divRowPriceAndBuy = document.createElement('div');
@@ -327,11 +345,11 @@ function productGridGeneration(mainScreenAmountGoods) {
 
     var spanPriceRub = document.createElement('span');
     spanPriceRub.className = "item-price";
-    spanPriceRub.innerHTML = Math.trunc(goods[i].goodPrice) + 'р.';
+    spanPriceRub.innerHTML = Math.trunc(goodsFromServer[i].goodPrice) + 'р.';
     divColPrice.appendChild(spanPriceRub);
 
     var supPriceKop = document.createElement('sup');
-    supPriceKop.innerHTML = Number(String(goods[i].goodPrice).split('.')[1] || 0) + 'коп.';
+    supPriceKop.innerHTML = Number(String(goodsFromServer[i].goodPrice).split('.')[1] || 0) + 'коп.';
     divColPrice.appendChild(supPriceKop);
 
     var divWrapColButtonToCart = document.createElement('div');
@@ -344,7 +362,7 @@ function productGridGeneration(mainScreenAmountGoods) {
 
     var buttonBuy = document.createElement('button');
     buttonBuy.className = "btn btn-outline-success my-2 my-sm-0 add_item";
-    buttonBuy.setAttribute("data-id", goods[i].id);
+    buttonBuy.setAttribute("data-id", goodsFromServer[i].id);
     buttonBuy.innerHTML = "В корзину";
     divColButtonToCart.appendChild(buttonBuy);
 
@@ -356,6 +374,7 @@ function productGridGeneration(mainScreenAmountGoods) {
     listenerForButtonsBuy();
   };
 };
+
 //генерация добавляющейся товарной сетки
 function addProductGridGeneration(mainScreenAmountGoods) {
   var rowContentGrid = document.querySelector('.content-grid');
@@ -375,7 +394,7 @@ function addProductGridGeneration(mainScreenAmountGoods) {
 
     var itemImage = document.createElement('img');
     itemImage.className = "mx-auto d-block";
-    itemImage.setAttribute("src", goods[i].imageOfGoods);
+    itemImage.setAttribute("src", goodsFromServer[i].imageOfGoods);
     divItemImage.appendChild(itemImage);
 
     var divFluid = document.createElement('div');
@@ -384,7 +403,7 @@ function addProductGridGeneration(mainScreenAmountGoods) {
 
     var itemTitle = document.createElement('h5');
     itemTitle.className = "item-title text-center";
-    itemTitle.innerHTML = goods[i].goodsName;
+    itemTitle.innerHTML = goodsFromServer[i].goodsName;
     divFluid.appendChild(itemTitle);
 
     var divRowPriceAndBuy = document.createElement('div');
@@ -397,11 +416,11 @@ function addProductGridGeneration(mainScreenAmountGoods) {
 
     var spanPriceRub = document.createElement('span');
     spanPriceRub.className = "item-price";
-    spanPriceRub.innerHTML = Math.trunc(goods[i].goodPrice) + 'р.';
+    spanPriceRub.innerHTML = Math.trunc(goodsFromServer[i].goodPrice) + 'р.';
     divColPrice.appendChild(spanPriceRub);
 
     var supPriceKop = document.createElement('sup');
-    supPriceKop.innerHTML = Number(String(goods[i].goodPrice).split('.')[1] || 0) + 'коп.';
+    supPriceKop.innerHTML = Number(String(goodsFromServer[i].goodPrice).split('.')[1] || 0) + 'коп.';
     divColPrice.appendChild(supPriceKop);
 
     var divWrapColButtonToCart = document.createElement('div');
@@ -414,7 +433,7 @@ function addProductGridGeneration(mainScreenAmountGoods) {
 
     var buttonBuy = document.createElement('button');
     buttonBuy.className = "btn btn-outline-success my-2 my-sm-0 add_item";
-    buttonBuy.setAttribute("data-id", goods[i].id);
+    buttonBuy.setAttribute("data-id", goodsFromServer[i].id);
     buttonBuy.innerHTML = "В корзину";
     divColButtonToCart.appendChild(buttonBuy);
 
@@ -462,9 +481,9 @@ function addToCart(e) {
   };
   //если маркер говорит, что товара в корзине не, то получив itemID перебираем массив goods и, если находим нужный нам объект, то передаем его в корзину
   if (!marker) {
-    for (var j = 0; j < goods.length; j++) {
-      if (goods[j].id == itemId) {
-        cart.push(goods[j]);
+    for (var j = 0; j < goodsFromServer.length; j++) {
+      if (goodsFromServer[j].id == itemId) {
+        cart.push(goodsFromServer[j]);
         cartRender(itemId);
       };
     };
@@ -655,9 +674,9 @@ function increaseProductAmountInCart(e) {
   //console.log(presentValueOfProduct);
   var idProduct = elemContentAmount[0].getAttribute('data-id');
   var tempObjProduct = {};
-  for (var i = 0; i < goods.length; i++) {
-    if (goods[i].id == idProduct) {
-      tempObjProduct = goods[i];
+  for (var i = 0; i < goodsFromServer.length; i++) {
+    if (goodsFromServer[i].id == idProduct) {
+      tempObjProduct = goodsFromServer[i];
       //console.log(tempObjProduct);
     };
   };
@@ -668,7 +687,6 @@ function increaseProductAmountInCart(e) {
 };
 
 function changeTotalPriceForSuchAProduct(e) {
-  //console.log(goods[0].id);
   var closestRow = this.closest('.row');
   var elemContentAmount = closestRow.getElementsByTagName('p');
   var parentOfRow = closestRow.parentNode;
@@ -677,10 +695,9 @@ function changeTotalPriceForSuchAProduct(e) {
   var idProduct = elemContentAmount[0].getAttribute('data-id');
   //console.log(idProduct);
   var tempObjProduct;
-  for (var i = 0; i < goods.length; i++) {
-    //console.log(goods[i]);
-    if (goods[i].id == idProduct) {
-      tempObjProduct = goods[i];
+  for (var i = 0; i < goodsFromServer.length; i++) {
+    if (goodsFromServer[i].id == idProduct) {
+      tempObjProduct = goodsFromServer[i];
     };
   };
   elemTotalPriceFotSuchProduct.innerHTML = '';
@@ -789,9 +806,13 @@ function renderTotalAmountAndPriceMainPage() {
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
 };
 
+XHRforGoods();
+
 productGridGeneration(mainScreenAmountGoods);
 
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
+
+
 
 
