@@ -6,147 +6,168 @@ var goods = [
     goodsName: 'Сок Добрый Яблоко 2л',
     goodPrice: 102.99,
     numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    imageOfGoods: './icon/juice.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000002,
     goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
     goodPrice: 299.99,
     numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg'
+    imageOfGoods: './icon/coffee.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000003,
     goodsName: 'Масло оливковое 0,5л',
     goodPrice: 585.99,
     numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg'
+    imageOfGoods: './icon/oil.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000004,
     goodsName: 'Чай Richard 100п.',
     goodPrice: 299.99,
     numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg'
+    imageOfGoods: './icon/tea.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000005,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    goodsName: 'Конфеты B&B Задорная пчелка 250г',
+    goodPrice: 44.99,
+    numberOfGoods: 122,
+    imageOfGoods: './icon/candyBee.jpeg',
+    category: 'drugs'
   },
   {
     id: 100000006,
-    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
-    goodPrice: 299.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg'
+    goodsName: 'Семечки От Мартина Отборные обжаренные 200г',
+    goodPrice: 102.99,
+    numberOfGoods: 52,
+    imageOfGoods: './icon/sunFlowerSeeds.jpeg',
+    category: 'drugs'
   },
   {
     id: 100000007,
-    goodsName: 'Масло оливковое 0,5л',
-    goodPrice: 585.99,
-    numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg'
+    goodsName: 'Молоко Простоквашино 3.2% 950мл',
+    goodPrice: 81.99,
+    numberOfGoods: 1232,
+    imageOfGoods: './icon/milk.jpeg',
+    category: 'milk products'
   },
   {
     id: 100000008,
-    goodsName: 'Чай Richard 100п.',
-    goodPrice: 299.99,
-    numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg'
+    goodsName: 'Мясо для бульона говяжье',
+    goodPrice: 449.99,
+    numberOfGoods: 41,
+    imageOfGoods: './icon/beef.jpeg',
+    category: 'meat products'
   },
   {
     id: 100000009,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    goodsName: 'Мясо цыпленка Первая свежесть 750г',
+    goodPrice: 169.99,
+    numberOfGoods: 135,
+    imageOfGoods: './icon/chicken.jpeg',
+    category: 'meat products'
   },
   {
     id: 100000010,
-    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
-    goodPrice: 299.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg'
+    goodsName: 'Яйца Окское СО белые 10шт',
+    goodPrice: 88.99,
+    numberOfGoods: 85,
+    imageOfGoods: './icon/eggs.jpeg',
+    category: 'eggs'
   },
   {
     id: 100000011,
-    goodsName: 'Масло оливковое 0,5л',
-    goodPrice: 585.99,
-    numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg'
+    goodsName: 'Яйца Qegg перепелиные столовые для детского питания 20шт',
+    goodPrice: 67.99,
+    numberOfGoods: 19,
+    imageOfGoods: './icon/eggsQ.jpeg',
+    category: 'eggs'
   },
   {
     id: 100000012,
-    goodsName: 'Чай Richard 100п.',
-    goodPrice: 299.99,
-    numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg'
+    goodsName: 'Тилапия Магуро филе замороженное 800г',
+    goodPrice: 349.99,
+    numberOfGoods: 43,
+    imageOfGoods: './icon/fish.jpeg',
+    category: 'fish'
   },
   {
     id: 100000013,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    goodsName: 'Форель кусок охлажденная',
+    goodPrice: 1009.99,
+    numberOfGoods: 5,
+    imageOfGoods: './icon/fish2.jpeg',
+    category: 'fish'
   },
   {
     id: 100000014,
-    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
-    goodPrice: 299.99,
+    goodsName: 'Рис Мистраль Кубань круглозерный 900г',
+    goodPrice: 84.99,
     numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg'
+    imageOfGoods: './icon/pic.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000015,
-    goodsName: 'Масло оливковое 0,5л',
-    goodPrice: 585.99,
+    goodsName: 'Гречка Ярмарка Отборная ядрица 4пак*62.5г',
+    goodPrice: 42.99,
     numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg'
+    imageOfGoods: './icon/buckwheat.jpeg',
+    category: 'grocery'
   },
   {
     id: 100000016,
-    goodsName: 'Чай Richard 100п.',
-    goodPrice: 299.99,
-    numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg'
+    goodsName: 'Перец ПРОСТО черный молотый 15г',
+    goodPrice: 8.19,
+    numberOfGoods: 431,
+    imageOfGoods: './icon/pepper.jpeg',
+    category: 'spice'
   },
   {
     id: 100000017,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    goodsName: 'Базилик Kotanyi измельченный 9г',
+    goodPrice: 29.99,
+    numberOfGoods: 139,
+    imageOfGoods: './icon/basil.jpeg',
+    category: 'spice'
   },
   {
     id: 100000018,
-    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
-    goodPrice: 299.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg'
+    goodsName: 'Пиво Афанасий Porter 8% 0.5л',
+    goodPrice: 105.00,
+    numberOfGoods: 588,
+    imageOfGoods: './icon/beer.jpeg',
+    category: 'alcohol'
   },
   {
     id: 100000019,
-    goodsName: 'Масло оливковое 0,5л',
-    goodPrice: 585.99,
-    numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg'
+    goodsName: 'Виски Lagavulin 43% 0.75л п/у',
+    goodPrice: 7299.99,
+    numberOfGoods: 7,
+    imageOfGoods: './icon/whiskey.jpeg',
+    category: 'alcohol'
   },
   {
     id: 100000020,
-    goodsName: 'Чай Richard 100п.',
-    goodPrice: 299.99,
-    numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg'
+    goodsName: 'Виски Chivas Regal 18 y.o. 40% 0.7л п/у',
+    goodPrice: 5743.99,
+    numberOfGoods: 4,
+    imageOfGoods: './icon/whiskey2.jpeg',
+    category: 'alcohol'
   },
   {
     id: 100000021,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg'
+    goodsName: 'Абсент Jacques Senaux Absinthe Green 70% 0.7л',
+    goodPrice: 1790.99,
+    numberOfGoods: 11,
+    imageOfGoods: './icon/absinthe.jpeg',
+    category: 'alcohol'
   }
 ]
 //var JSONgoods = JSON.stringify(goods);
@@ -178,14 +199,19 @@ var usersFromServer; //переменная для сохранения пере
 function XHRforGoods() {
   var getGoodsFromServer = new XMLHttpRequest();
   var URL = 'http://mrptqp.mocklab.io/product/all';
-  getGoodsFromServer.open('GET', URL, false);
+  getGoodsFromServer.open('GET', URL, true);
   getGoodsFromServer.send();
-  if (getGoodsFromServer.status != 200) {
-    // обработать ошибку
-    alert(getGoodsFromServer.status + ': ' + getGoodsFromServer.statusText); // пример вывода: 404: Not Found
-  } else {
-    goodsFromServer = JSON.parse(getGoodsFromServer.responseText); // пропарсенный массив объектов с сервера 
-    //console.log(goodsFromServer);
+
+  getGoodsFromServer.onreadystatechange = function () {
+    if (getGoodsFromServer.readyState != 4) return;
+    if (getGoodsFromServer.status != 200) {
+      // обработать ошибку
+      alert(getGoodsFromServer.status + ': ' + getGoodsFromServer.statusText); // пример вывода: 404: Not Found
+    } else {
+      goodsFromServer = JSON.parse(getGoodsFromServer.responseText); // пропарсенный массив объектов с сервера 
+      //console.log(goodsFromServer);
+    };
+    productGridGeneration(mainScreenAmountGoods);
   };
 };
 
@@ -193,14 +219,17 @@ function XHRforGoods() {
 function XHRforUsers() {
   var getUserssFromServer = new XMLHttpRequest();
   var URL = 'http://mrptqp.mocklab.io/users';
-  getUserssFromServer.open('GET', URL, false);
+  getUserssFromServer.open('GET', URL, true);
   getUserssFromServer.send();
-  if (getUserssFromServer.status != 200) {
-    // обработать ошибку
-    alert(getUserssFromServer.status + ': ' + getUserssFromServer.statusText); // пример вывода: 404: Not Found
-  } else {
-    usersFromServer = JSON.parse(getUserssFromServer.responseText); // пропарсенный массив объектов с сервера 
-    //console.log(usersFromServer);
+  getUserssFromServer.onreadystatechange = function () {
+    if (getUserssFromServer.readyState != 4) return;
+    if (getUserssFromServer.status != 200) {
+      // обработать ошибку
+      alert(getUserssFromServer.status + ': ' + getUserssFromServer.statusText); // пример вывода: 404: Not Found
+    } else {
+      usersFromServer = JSON.parse(getUserssFromServer.responseText); // пропарсенный массив объектов с сервера 
+      console.log(usersFromServer);
+    };
   };
 };
 
@@ -853,8 +882,6 @@ function renderTotalAmountAndPriceMainPage() {
 
 XHRforGoods();
 XHRforUsers();
-
-productGridGeneration(mainScreenAmountGoods);
 
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
