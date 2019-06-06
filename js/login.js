@@ -194,32 +194,16 @@ var mainScreenAmountGoods = 8; //переменная, отображающая 
 var previouslyMainScreenAmountGoods = 8; //а эта для фиксации разницы в количестве отрисованных товаров
 var goodsFromServer; //переменная для сохранения перечня товаров, полученного с сервера
 var usersFromServer; //переменная для сохранения перечня пользователей, полученного с сервера
-
-//запрос продуктов с сервера
-function XHRforGoods() {
-  var getGoodsFromServer = new XMLHttpRequest();
-  var URL = 'http://mrptqp.mocklab.io/product/all';
-  getGoodsFromServer.open('GET', URL, true);
-  getGoodsFromServer.send();
-
-  getGoodsFromServer.onreadystatechange = function () {
-    if (getGoodsFromServer.readyState != 4) return;
-    if (getGoodsFromServer.status != 200) {
-      // обработать ошибку
-      alert(getGoodsFromServer.status + ': ' + getGoodsFromServer.statusText); // пример вывода: 404: Not Found
-    } else {
-      goodsFromServer = JSON.parse(getGoodsFromServer.responseText); // пропарсенный массив объектов с сервера 
-      //console.log(goodsFromServer);
-    };
-    productGridGeneration(mainScreenAmountGoods);
-  };
-};
+//var categorizedGoodsFromServer; //переменная для сохранения перечня категоризированных товаров, полученного с сервера
+var paramGoods = ''; //тип параметра, который запрашиваем с сервера, в нашем случае category
+var valueParam = ''; //значение параметра, конкретная категория товара, например eggs
 
 //запрос пользователей с сервера
 function XHRforUsers() {
   var getUserssFromServer = new XMLHttpRequest();
-  var URL = 'http://mrptqp.mocklab.io/users';
-  getUserssFromServer.open('GET', URL, true);
+  var URL = 'http://mrptqp.mocklab.io';
+  var URI = '/users';
+  getUserssFromServer.open('GET', URL + URI, true);
   getUserssFromServer.send();
   getUserssFromServer.onreadystatechange = function () {
     if (getUserssFromServer.readyState != 4) return;
@@ -228,10 +212,36 @@ function XHRforUsers() {
       alert(getUserssFromServer.status + ': ' + getUserssFromServer.statusText); // пример вывода: 404: Not Found
     } else {
       usersFromServer = JSON.parse(getUserssFromServer.responseText); // пропарсенный массив объектов с сервера 
-      console.log(usersFromServer);
+      //console.log(usersFromServer);
     };
   };
 };
+//запрос продуктов с сервера
+function xhrGoods(param, value) {
+  var getGoods = new XMLHttpRequest();
+  var URL = 'http://localhost:3000';
+  var URI = '/goods?' + param + '=' + value;
+  console.log(URI);
+  getGoods.open('GET', URL + URI, true);
+  getGoods.send();
+
+  getGoods.onreadystatechange = function () {
+    if (getGoods.readyState != 4) return;
+    if (getGoods.status != 200) {
+      // обработать ошибку
+      alert(getGoods.status + ': ' + getGoods.statusText); // пример вывода: 404: Not Found
+    } else {
+      goodsFromServer = JSON.parse(getGoods.responseText); // пропарсенный массив объектов с сервера 
+      //console.log(goodsFromServer);
+    };
+    if (URI == '/goods?=') {
+      productGridGeneration(mainScreenAmountGoods);
+    } else {
+      categorizedGridGeneration(goodsFromServer);
+    };
+  };
+};
+
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
@@ -365,20 +375,13 @@ function changeMainScreenAmountGoods(e) {
         mainScreenAmountGoods = mainScreenAmountGoods + 4;
         addProductGridGeneration(mainScreenAmountGoods);
     };
-    /*
-        if (mainScreenAmountGoods < goodsFromServer.length) {
-          mainScreenAmountGoods = mainScreenAmountGoods + 4;
-          console.log(mainScreenAmountGoods);
-          //setTimeout(addProductGridGeneration, 1000, mainScreenAmountGoods);
-          addProductGridGeneration(mainScreenAmountGoods);
-        };
-    */
   };
 };
 
 //генерация начальной товарной сетки
 function productGridGeneration(mainScreenAmountGoods) {
   var rowContentGrid = document.querySelector('.content-grid');
+  rowContentGrid.innerHTML = '';
 
   for (var i = 0; i < mainScreenAmountGoods; i++) {
     var divCol = document.createElement('div');
@@ -442,9 +445,9 @@ function productGridGeneration(mainScreenAmountGoods) {
     iTag.className = "fas fa-shopping-cart";
     iTag.setAttribute("aria-hidden", true);
     buttonBuy.appendChild(iTag);
-
-    listenerForButtonsBuy();
   };
+  listenerForButtonsBuy();
+  listenerForCategorized();
 };
 
 //генерация добавляющейся товарной сетки
@@ -514,10 +517,89 @@ function addProductGridGeneration(mainScreenAmountGoods) {
     iTag.className = "fas fa-shopping-cart";
     iTag.setAttribute("aria-hidden", true);
     buttonBuy.appendChild(iTag);
-
-    listenerForButtonsBuy();
   };
+  listenerForButtonsBuy();
   previouslyMainScreenAmountGoods = mainScreenAmountGoods;
+};
+
+function categorizedGridGeneration(goodsFromServer) {
+  var rowContentGrid = document.querySelector('.content-grid');
+  rowContentGrid.innerHTML = '';
+
+  for (var i = 0; i < goodsFromServer.length; i++) {
+    var divCol = document.createElement('div');
+    divCol.className = "col-md-3 content-item";
+    rowContentGrid.appendChild(divCol);
+
+    var divWrap = document.createElement('div');
+    divWrap.className = "item-wrapper my-3";
+    divCol.appendChild(divWrap);
+
+    var divItemImage = document.createElement('div');
+    divItemImage.className = "item-image";
+    divWrap.appendChild(divItemImage);
+
+    var itemImage = document.createElement('img');
+    itemImage.className = "mx-auto d-block";
+    itemImage.setAttribute("src", goodsFromServer[i].imageOfGoods);
+    divItemImage.appendChild(itemImage);
+
+    var divFluid = document.createElement('div');
+    divFluid.className = "container-fluid";
+    divWrap.appendChild(divFluid);
+
+    var itemTitle = document.createElement('h5');
+    itemTitle.className = "item-title text-center";
+    itemTitle.innerHTML = goodsFromServer[i].goodsName;
+    divFluid.appendChild(itemTitle);
+
+    var divRowPriceAndBuy = document.createElement('div');
+    divRowPriceAndBuy.className = "row no-gutters";
+    divFluid.appendChild(divRowPriceAndBuy);
+
+    var divColPrice = document.createElement('div');
+    divColPrice.className = "col-6";
+    divRowPriceAndBuy.appendChild(divColPrice);
+
+    var spanPriceRub = document.createElement('span');
+    spanPriceRub.className = "item-price";
+    spanPriceRub.innerHTML = Math.trunc(goodsFromServer[i].goodPrice) + 'р.';
+    divColPrice.appendChild(spanPriceRub);
+
+    var supPriceKop = document.createElement('sup');
+    supPriceKop.innerHTML = Number(String(goodsFromServer[i].goodPrice).split('.')[1] || 0) + 'коп.';
+    divColPrice.appendChild(supPriceKop);
+
+    var divWrapColButtonToCart = document.createElement('div');
+    divWrapColButtonToCart.className = "col-6";
+    divRowPriceAndBuy.appendChild(divWrapColButtonToCart);
+
+    var divColButtonToCart = document.createElement('div');
+    divColButtonToCart.className = "item-actions";
+    divWrapColButtonToCart.appendChild(divColButtonToCart);
+
+    var buttonBuy = document.createElement('button');
+    buttonBuy.className = "btn btn-outline-success my-2 my-sm-0 add_item";
+    buttonBuy.setAttribute("data-id", goodsFromServer[i].id);
+    buttonBuy.innerHTML = "В корзину";
+    divColButtonToCart.appendChild(buttonBuy);
+
+    var iTag = document.createElement('i');
+    iTag.className = "fas fa-shopping-cart";
+    iTag.setAttribute("aria-hidden", true);
+    buttonBuy.appendChild(iTag);
+  };
+  listenerForButtonsBuy();
+  listenerForCategorized();
+  listenerForAllGoods();
+};
+
+function productFilter(e) {
+  var category = this.getAttribute('id');
+  paramGoods = 'category';
+  valueParam = category;
+  //console.log(category, paramGoods, valueParam);
+  xhrGoods(paramGoods, valueParam);
 };
 
 //слушатель для каждой кнопки "В корзину" на странице
@@ -527,6 +609,24 @@ function listenerForButtonsBuy() {
   for (var i = 0; i < contentItems.length; i++) {
     addEvent(contentItems[i].querySelector('.add_item'), 'click', addToCart);
   };
+};
+
+function listenerForCategorized() {
+  var categorizedItems = document.querySelectorAll('.categorized'); //все элементы категорий
+  //console.log(categorizedItems);
+  for (var i = 0; i < categorizedItems.length; i++) {
+    addEvent(categorizedItems[i], 'click', productFilter);
+  };
+};
+
+function listenerForAllGoods() {
+  var allGoodsElem = document.getElementById('all-goods');
+  console.log(allGoodsElem);
+  paramGoods = '';
+  valueParam = '';
+  addEvent(allGoodsElem, 'click', function () {
+    xhrGoods(paramGoods, valueParam)
+  });
 };
 
 //кроссбраузерный обработчик событий
@@ -880,7 +980,8 @@ function renderTotalAmountAndPriceMainPage() {
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
 };
 
-XHRforGoods();
+//XHRforGoods();
+xhrGoods(paramGoods, valueParam);
 XHRforUsers();
 
 //слушатель на прокрутку на сетке товаров
