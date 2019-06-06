@@ -197,25 +197,9 @@ var usersFromServer; //переменная для сохранения пере
 //var categorizedGoodsFromServer; //переменная для сохранения перечня категоризированных товаров, полученного с сервера
 var paramGoods = ''; //тип параметра, который запрашиваем с сервера, в нашем случае category
 var valueParam = ''; //значение параметра, конкретная категория товара, например eggs
+var paramUsers = ''; //тип параметра, который запрашиваем с сервера, в нашем случае idDB или passwordDB
+var valueUsers = ''; //значение параметра, конкретная категория товара, например mrPTqp@gmail.com или 123
 
-//запрос пользователей с сервера
-function XHRforUsers() {
-  var getUserssFromServer = new XMLHttpRequest();
-  var URL = 'http://mrptqp.mocklab.io';
-  var URI = '/users';
-  getUserssFromServer.open('GET', URL + URI, true);
-  getUserssFromServer.send();
-  getUserssFromServer.onreadystatechange = function () {
-    if (getUserssFromServer.readyState != 4) return;
-    if (getUserssFromServer.status != 200) {
-      // обработать ошибку
-      alert(getUserssFromServer.status + ': ' + getUserssFromServer.statusText); // пример вывода: 404: Not Found
-    } else {
-      usersFromServer = JSON.parse(getUserssFromServer.responseText); // пропарсенный массив объектов с сервера 
-      //console.log(usersFromServer);
-    };
-  };
-};
 //запрос продуктов с сервера
 function xhrGoods(param, value) {
   var getGoods = new XMLHttpRequest();
@@ -242,6 +226,26 @@ function xhrGoods(param, value) {
   };
 };
 
+//запрос пользователей с сервера
+function xhrUsers(param, value) {
+  var getUsers = new XMLHttpRequest();
+  var URL = 'http://localhost:3000';
+  var URI = '/users?' + param + '=' + value;
+  console.log(URI);
+  getUsers.open('GET', URL + URI, true);
+  getUsers.send();
+
+  getUsers.onreadystatechange = function () {
+    if (getUsers.readyState != 4) return;
+    if (getUsers.status != 200) {
+      // обработать ошибку
+      alert(getUsers.status + ': ' + getUsers.statusText); // пример вывода: 404: Not Found
+    } else {
+      usersFromServer = JSON.parse(getUsers.responseText); // пропарсенный массив объектов с сервера 
+      //console.log(goodsFromServer);
+    };
+  };
+};
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
 var MD5 = function (d) {
@@ -980,9 +984,8 @@ function renderTotalAmountAndPriceMainPage() {
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
 };
 
-//XHRforGoods();
 xhrGoods(paramGoods, valueParam);
-XHRforUsers();
+xhrUsers();
 
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
