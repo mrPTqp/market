@@ -172,22 +172,22 @@ var goods = [
 ]
 //var JSONgoods = JSON.stringify(goods);
 //console.log(JSONgoods);
-//объект для хранения idDB (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
+//объект для хранения login (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
 var users = [
   {
-    idDB: 'mrPTqp@gmail.com',
+    login: 'mrPTqp@gmail.com',
     passwordDB: '123',
     moneyBalanceDB: 12873
   },
   {
-    idDB: 'PTqp@yandex.ru',
+    login: 'PTqp@yandex.ru',
     passwordDB: '321',
     moneyBalanceDB: 3333
   }
 ]
 //var JSONusers = JSON.stringify(users);
 //console.log(JSONusers);
-var sessions = {}; //объект для хранения токена сессии и idDB пользователя
+var sessions = {}; //объект для хранения токена сессии и login пользователя
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
@@ -197,7 +197,7 @@ var usersFromServer; //переменная для сохранения пере
 //var categorizedGoodsFromServer; //переменная для сохранения перечня категоризированных товаров, полученного с сервера
 var paramGoods = ''; //тип параметра, который запрашиваем с сервера, в нашем случае category
 var valueParam = ''; //значение параметра, конкретная категория товара, например eggs
-var paramUsers = ''; //тип параметра, который запрашиваем с сервера, в нашем случае idDB или passwordDB
+var paramUsers = ''; //тип параметра, который запрашиваем с сервера, в нашем случае login или passwordDB
 var valueUsers = ''; //значение параметра, конкретная категория товара, например mrPTqp@gmail.com или 123
 
 //запрос продуктов с сервера
@@ -205,7 +205,7 @@ function xhrGoods(param, value) {
   var getGoods = new XMLHttpRequest();
   var URL = 'http://localhost:3000';
   var URI = '/goods?' + param + '=' + value;
-  console.log(URI);
+  //console.log(URI);
   getGoods.open('GET', URL + URI, true);
   getGoods.send();
 
@@ -231,7 +231,7 @@ function xhrUsers(param, value) {
   var getUsers = new XMLHttpRequest();
   var URL = 'http://localhost:3000';
   var URI = '/users?' + param + '=' + value;
-  console.log(URI);
+  //console.log(URI);
   getUsers.open('GET', URL + URI, true);
   getUsers.send();
 
@@ -304,7 +304,7 @@ function controlCookiesAndSessions() {
   function authentication(email, password) {
     var a = 0; //метка, говорящая о том, прошел ли кто-то аутентификацию
     for (var i = 0; i < usersFromServer.length; i++) {
-      if (usersFromServer[i].idDB == email && usersFromServer[i].passwordDB == password) {
+      if (usersFromServer[i].login == email && usersFromServer[i].passwordDB == password) {
         generateToken(email, password);
         replaceAuthenticationFormToGreeting();
         a = 1;
@@ -323,19 +323,73 @@ function controlCookiesAndSessions() {
 
     setSessions(token);
     setCookie(email, token);
+    xhrSessionID('login', email, token);
   };
 
   //записывает полученный токен в sessions
   function setSessions(token) {
-    sessions.idDB = token;
+    sessions.login = token;
     //console.log(sessions);
   };
 
   //записывает токен и email пользователя в куки
-  function setCookie(userIdDB, token) {
-    Cookies.set('id', userIdDB, { expires: 365 });
+  function setCookie(userlogin, token) {
+    Cookies.set('id', userlogin, { expires: 365 });
     Cookies.set('sessionID', token, { expires: 365 });
     //console.log(document.cookie);
+  };
+
+  function xhrSessionID(param, value, token) {
+    var userObjesctFromServer;
+    var getSessionID = new XMLHttpRequest();
+    var URL = 'http://localhost:3000';
+    var URI = '/users?' + param + '=' + value;
+    console.log(URI);
+    getSessionID.open('GET', URL + URI, false);
+    getSessionID.send();
+
+    userObjesctFromServer = JSON.parse(getSessionID.responseText)
+    console.log(userObjesctFromServer);
+
+    getSessionID.onreadystatechange = function () {
+      if (getSessionID.readyState != 4) return;
+      if (getSessionID.status != 200) {
+        // обработать ошибку
+        alert(getSessionID.status + ': ' + getSessionID.statusText); // пример вывода: 404: Not Found
+      } else {
+        userObjesctFromServer = JSON.parse(getSessionID.responseText); // пропарсенный массив объектов с сервера 
+        console.log(userObjesctFromServer);
+      };
+    };
+    //  [{id: "1", login: "mrPTqp@gmail.com", passwordDB: "123", moneyBalanceDB: 12873, sessionIDDB: ""}]
+
+    var patchSession = new XMLHttpRequest();
+    var URL = 'http://localhost:3000';
+    var URI = '/users/' + userObjesctFromServer[0].id;
+    userObjesctFromServer[0].sessionIDDB = '\"' + token + '\"';
+    var body = JSON.stringify(userObjesctFromServer);
+    console.log(URI);
+    patchSession.open('PATCH', URL + URI, false);
+    patchSession.send(body);
+
+    var getSessionID2 = new XMLHttpRequest();
+    getSessionID2.open('GET', URL + URI, false);
+    getSessionID2.send();
+
+    userObjesctFromServer = JSON.parse(getSessionID.responseText)
+    console.log(userObjesctFromServer);
+
+    getSessionID2.onreadystatechange = function () {
+      if (getSessionID2.readyState != 4) return;
+      if (getSessionID2.status != 200) {
+        // обработать ошибку
+        alert(getSessionID2.status + ': ' + getSessionID2.statusText); // пример вывода: 404: Not Found
+      } else {
+        userObjesctFromServer = JSON.parse(getSessionID2.responseText); // пропарсенный массив объектов с сервера 
+        console.log(userObjesctFromServer);
+      };
+    };
+
   };
 
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
