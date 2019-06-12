@@ -202,6 +202,7 @@ var valueUsers = ''; //значение параметра, конкретная
 var sessionIDFromServer; //sessionID с сервера
 var moneyFromServer; //количество денег с сервера
 var totalPrice; //итоговая рассчитанная цена
+var loginFromServer;
 
 //запрос продуктов с сервера
 function xhrGoods(param, value) {
@@ -270,8 +271,8 @@ function xhrSessionID(param, value) {
       //console.log(sessionIDDB);
       moneyFromServer = userObjesctFromServer[0].moneyBalanceDB;
       //console.log(moneyFromServer);
-    };      
-  };    
+    };
+  };
 };
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
@@ -333,7 +334,7 @@ function controlCookiesAndSessions() {
     for (var i = 0; i < usersFromServer.length; i++) {
       if (usersFromServer[i].login == email && usersFromServer[i].passwordDB == password) {
         generateToken(email, password);
-        replaceAuthenticationFormToGreeting();
+        replaceAuthenticationFormToGreeting(email);
         a = 1;
       };
     };
@@ -368,14 +369,14 @@ function controlCookiesAndSessions() {
   };
 
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
-  function replaceAuthenticationFormToGreeting() {
+  function replaceAuthenticationFormToGreeting(emailForGreeting) {
     var autorizationForm = document.getElementById('autorization');
 
-    autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + email + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit">Выйти</button></div></div></div>';
+    autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + emailForGreeting + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit">Выйти</button></div></div></div>';
     listenerForQuit();
   };
-    
-  authentication(email, password);  
+
+  authentication(email, password);
 };
 
 //при нажатии кнопки "Выйти" удаляем sessionID из куки и объекта sessions и заменяем приветствие на форму авторизации
@@ -1032,8 +1033,8 @@ function listenerPlaceAnOrder() {
   addEvent(buttonPlaceAnOrder, 'click', placeAnOrder);
 };
 
-function getCookie (name) {
-  var results = document.cookie.match ( '(^|;) ?' + name + '=([^;]*)(;|$)' );
+function getCookie(name) {
+  var results = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
   if (results) return (unescape(results[2]));
   else return null;
 };
@@ -1045,7 +1046,7 @@ function placeAnOrder() {
   console.log(moneyFromServer);
   console.log(totalPrice);
   if (sessionIDFromServer == cookiesSessionID) {
-    
+
     if (totalPrice < moneyFromServer) {
       alert('Ваш заказ передан специалисту, который вскоре свяжется с вами для уточнения деталей');
     } else {
@@ -1056,10 +1057,48 @@ function placeAnOrder() {
   };
 };
 
+function xhrSessionIDForCookie(value) {
+  var userObj;
+  var getSessionIDForCookie = new XMLHttpRequest();
+  var URL = 'http://localhost:3000';
+  var URI = '/users?' + 'sessionIDDB' + '=' + value;
+  //console.log(URI);
+  getSessionIDForCookie.open('GET', URL + URI, true);
+  getSessionIDForCookie.send();
+
+  getSessionIDForCookie.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status != 200) {
+      // обработать ошибку
+      alert(this.status + ': ' + this.statusText); // пример вывода: 404: Not Found
+      return;
+    };
+
+    userObj = JSON.parse(this.responseText); // пропарсенный массив объектов с сервера 
+    loginFromServer = userObj[0].login;
+    console.log(loginFromServer);
+  };
+};
+
+
+function checkAviableCoockie() {
+  var aviableCookiesSessionID = getCookie('sessionID');
+  xhrSessionIDForCookie(aviableCookiesSessionID);
+  //console.log(aviableCookiesSessionID);
+  if (aviableCookiesSessionID) {    
+    var aviableCookiesID = getCookie('id');
+    //console.log(aviableCookiesID);
+    if (loginFromServer == aviableCookiesID)
+    replaceAuthenticationFormToGreeting(loginFromServer);
+  };
+};
+
 xhrGoods(paramGoods, valueParam);
 xhrUsers(paramUsers, valueUsers);
 
 listenerForAutorization();
+//checkAviableCoockie();
 
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
