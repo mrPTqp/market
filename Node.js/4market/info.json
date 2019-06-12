@@ -5,14 +5,14 @@
       "login": "mrPTqp@gmail.com",
       "passwordDB": "123",
       "moneyBalanceDB": 12873,
-      "sessionIDDB": ""
+      "sessionIDDB": "93136a65fc0d4492ad7e665bfc2c36ae"
     },
     {
       "id": "2",
       "login": "PTqp@yandex.ru",
       "passwordDB": "321",
       "moneyBalanceDB": 3333,
-      "sessionIDDB": ""
+      "sessionIDDB": "d0015e0a960e26af6b318d1ae438803c"
     }
   ],
   "goods": [

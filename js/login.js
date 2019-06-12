@@ -199,6 +199,9 @@ var paramGoods = ''; //тип параметра, который запраши�
 var valueParam = ''; //значение параметра, конкретная категория товара, например eggs
 var paramUsers = ''; //тип параметра, который запрашиваем с сервера, в нашем случае login или passwordDB
 var valueUsers = ''; //значение параметра, конкретная категория товара, например mrPTqp@gmail.com или 123
+var sessionIDFromServer; //sessionID с сервера
+var moneyFromServer; //количество денег с сервера
+var totalPrice; //итоговая рассчитанная цена
 
 //запрос продуктов с сервера
 function xhrGoods(param, value) {
@@ -245,6 +248,30 @@ function xhrUsers(param, value) {
       //console.log(goodsFromServer);
     };
   };
+};
+
+function xhrSessionID(param, value) {
+  var userObjesctFromServer;
+  var getSessionID = new XMLHttpRequest();
+  var URL = 'http://localhost:3000';
+  var URI = '/users?' + param + '=' + value;
+  //console.log(URI);
+  getSessionID.open('GET', URL + URI, true);
+  getSessionID.send();
+
+  getSessionID.onreadystatechange = function () {
+    if (getSessionID.readyState != 4) return;
+    if (getSessionID.status != 200) {
+      // обработать ошибку
+      alert(getSessionID.status + ': ' + getSessionID.statusText); // пример вывода: 404: Not Found
+    } else {
+      userObjesctFromServer = JSON.parse(getSessionID.responseText); // пропарсенный массив объектов с сервера 
+      sessionIDFromServer = userObjesctFromServer[0].sessionIDDB;
+      //console.log(sessionIDDB);
+      moneyFromServer = userObjesctFromServer[0].moneyBalanceDB;
+      //console.log(moneyFromServer);
+    };      
+  };    
 };
 
 //для MD5 https://stackoverflow.com/questions/14733374/how-to-generate-md5-file-hash-on-javascript
@@ -320,10 +347,11 @@ function controlCookiesAndSessions() {
   function generateToken(email, password) {
     var sumEmailPassword = email + password;
     var token = MD5(sumEmailPassword);
+    //console.log(token);
 
     setSessions(token);
     setCookie(email, token);
-    xhrSessionID('login', email, token);
+    xhrSessionID('login', email);
   };
 
   //записывает полученный токен в sessions
@@ -337,58 +365,6 @@ function controlCookiesAndSessions() {
     Cookies.set('id', userlogin, { expires: 365 });
     Cookies.set('sessionID', token, { expires: 365 });
     //console.log(document.cookie);
-  };
-
-  function xhrSessionID(param, value, token) {
-    var userObjesctFromServer;
-    var getSessionID = new XMLHttpRequest();
-    var URL = 'http://localhost:3000';
-    var URI = '/users?' + param + '=' + value;
-    //console.log(URI);
-    getSessionID.open('GET', URL + URI, false);
-    getSessionID.send();
-
-    userObjesctFromServer = JSON.parse(getSessionID.responseText)
-    console.log(userObjesctFromServer);
-
-    getSessionID.onreadystatechange = function () {
-      if (getSessionID.readyState != 4) return;
-      if (getSessionID.status != 200) {
-        // обработать ошибку
-        alert(getSessionID.status + ': ' + getSessionID.statusText); // пример вывода: 404: Not Found
-      } else {
-        userObjesctFromServer = JSON.parse(getSessionID.responseText); // пропарсенный массив объектов с сервера 
-        console.log(userObjesctFromServer);
-      };
-    };
-    //  [{id: "1", login: "mrPTqp@gmail.com", passwordDB: "123", moneyBalanceDB: 12873, sessionIDDB: ""}]
-
-    var patchSession = new XMLHttpRequest();
-    var URL = 'http://localhost:3000';
-    var URI = '/users/' + userObjesctFromServer[0].id;
-    userObjesctFromServer[0].sessionIDDB = token;
-    var body = JSON.stringify(userObjesctFromServer);
-    //console.log(URI);
-    patchSession.open('PATCH', URL + URI, false);
-    patchSession.send(body);
-    //console.log(patchSession.status);
-
-    var getSessionID2 = new XMLHttpRequest();
-    getSessionID2.open('GET', URL + URI, false);
-    getSessionID2.send();
-    userObjesctFromServer = JSON.parse(getSessionID.responseText)
-    console.log(userObjesctFromServer);
-    getSessionID2.onreadystatechange = function () {
-      if (getSessionID2.readyState != 4) return;
-      if (getSessionID2.status != 200) {
-        // обработать ошибку
-        alert(getSessionID2.status + ': ' + getSessionID2.statusText); // пример вывода: 404: Not Found
-      } else {
-        userObjesctFromServer = JSON.parse(getSessionID2.responseText); // пропарсенный массив объектов с сервера 
-        console.log(userObjesctFromServer);
-      };
-    };
-    
   };
 
   //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
@@ -872,6 +848,7 @@ function cartRender(itemId) {
 
   listenerChangeAmountProductInCart();
   listenerDeleteProductFromCart();
+  listenerPlaceAnOrder();
 };
 
 //слушатель для изменения количества товара в корзине
@@ -1000,7 +977,7 @@ function calculateTotalPrice() {
     var RUB = itemPriceTotalRUB[i];
     var COP = itemPriceTotalCOP[i];
     totalPriceNoFixed += Number(+(RUB + '.' + COP));
-    var totalPrice = totalPriceNoFixed.toFixed(2);
+    totalPrice = totalPriceNoFixed.toFixed(2);
     //console.log(totalPrice);
   };
   //console.log(totalPrice);
@@ -1047,6 +1024,36 @@ function renderTotalAmountAndPriceMainPage() {
   elemAmountMainPage.innerHTML = totlaAmount;
   elemPriceMainPageRUB.innerHTML = ModalCartTotalPriceRUB;
   elemPriceMainPageCOP.innerHTML = ModalCartTotalPriceCOP;
+};
+
+//слушатель для оформления заказа
+function listenerPlaceAnOrder() {
+  var buttonPlaceAnOrder = document.getElementById("place-an-order");
+  addEvent(buttonPlaceAnOrder, 'click', placeAnOrder);
+};
+
+function getCookie (name) {
+  var results = document.cookie.match ( '(^|;) ?' + name + '=([^;]*)(;|$)' );
+  if (results) return (unescape(results[2]));
+  else return null;
+};
+
+function placeAnOrder() {
+  console.log(sessionIDFromServer);
+  var cookiesSessionID = getCookie('sessionID');
+  console.log(cookiesSessionID);
+  console.log(moneyFromServer);
+  console.log(totalPrice);
+  if (sessionIDFromServer == cookiesSessionID) {
+    
+    if (totalPrice < moneyFromServer) {
+      alert('Ваш заказ передан специалисту, который вскоре свяжется с вами для уточнения деталей');
+    } else {
+      alert('Недостаточно средств, пополните баланс');
+    };
+  } else {
+    alert('Ошибка авторизации, попробуйте войти еще раз');
+  };
 };
 
 xhrGoods(paramGoods, valueParam);
