@@ -1,192 +1,5 @@
 "use strict";
-//для хранения товаров (неиспользуемый, на случай если нет сервера)
-var goods = [
-  {
-    id: 100000001,
-    goodsName: 'Сок Добрый Яблоко 2л',
-    goodPrice: 102.99,
-    numberOfGoods: 13,
-    imageOfGoods: './icon/juice.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000002,
-    goodsName: 'Кофе Jacobs Tassimo Cappuccino Т-диски 8шт',
-    goodPrice: 299.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/coffee.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000003,
-    goodsName: 'Масло оливковое 0,5л',
-    goodPrice: 585.99,
-    numberOfGoods: 123,
-    imageOfGoods: './icon/oil.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000004,
-    goodsName: 'Чай Richard 100п.',
-    goodPrice: 299.99,
-    numberOfGoods: 4321,
-    imageOfGoods: './icon/tea.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000005,
-    goodsName: 'Конфеты B&B Задорная пчелка 250г',
-    goodPrice: 44.99,
-    numberOfGoods: 122,
-    imageOfGoods: './icon/candyBee.jpeg',
-    category: 'drugs'
-  },
-  {
-    id: 100000006,
-    goodsName: 'Семечки От Мартина Отборные обжаренные 200г',
-    goodPrice: 102.99,
-    numberOfGoods: 52,
-    imageOfGoods: './icon/sunFlowerSeeds.jpeg',
-    category: 'drugs'
-  },
-  {
-    id: 100000007,
-    goodsName: 'Молоко Простоквашино 3.2% 950мл',
-    goodPrice: 81.99,
-    numberOfGoods: 1232,
-    imageOfGoods: './icon/milk.jpeg',
-    category: 'milk products'
-  },
-  {
-    id: 100000008,
-    goodsName: 'Мясо для бульона говяжье',
-    goodPrice: 449.99,
-    numberOfGoods: 41,
-    imageOfGoods: './icon/beef.jpeg',
-    category: 'meat products'
-  },
-  {
-    id: 100000009,
-    goodsName: 'Мясо цыпленка Первая свежесть 750г',
-    goodPrice: 169.99,
-    numberOfGoods: 135,
-    imageOfGoods: './icon/chicken.jpeg',
-    category: 'meat products'
-  },
-  {
-    id: 100000010,
-    goodsName: 'Яйца Окское СО белые 10шт',
-    goodPrice: 88.99,
-    numberOfGoods: 85,
-    imageOfGoods: './icon/eggs.jpeg',
-    category: 'eggs'
-  },
-  {
-    id: 100000011,
-    goodsName: 'Яйца Qegg перепелиные столовые для детского питания 20шт',
-    goodPrice: 67.99,
-    numberOfGoods: 19,
-    imageOfGoods: './icon/eggsQ.jpeg',
-    category: 'eggs'
-  },
-  {
-    id: 100000012,
-    goodsName: 'Тилапия Магуро филе замороженное 800г',
-    goodPrice: 349.99,
-    numberOfGoods: 43,
-    imageOfGoods: './icon/fish.jpeg',
-    category: 'fish'
-  },
-  {
-    id: 100000013,
-    goodsName: 'Форель кусок охлажденная',
-    goodPrice: 1009.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/fish2.jpeg',
-    category: 'fish'
-  },
-  {
-    id: 100000014,
-    goodsName: 'Рис Мистраль Кубань круглозерный 900г',
-    goodPrice: 84.99,
-    numberOfGoods: 5,
-    imageOfGoods: './icon/pic.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000015,
-    goodsName: 'Гречка Ярмарка Отборная ядрица 4пак*62.5г',
-    goodPrice: 42.99,
-    numberOfGoods: 123,
-    imageOfGoods: './icon/buckwheat.jpeg',
-    category: 'grocery'
-  },
-  {
-    id: 100000016,
-    goodsName: 'Перец ПРОСТО черный молотый 15г',
-    goodPrice: 8.19,
-    numberOfGoods: 431,
-    imageOfGoods: './icon/pepper.jpeg',
-    category: 'spice'
-  },
-  {
-    id: 100000017,
-    goodsName: 'Базилик Kotanyi измельченный 9г',
-    goodPrice: 29.99,
-    numberOfGoods: 139,
-    imageOfGoods: './icon/basil.jpeg',
-    category: 'spice'
-  },
-  {
-    id: 100000018,
-    goodsName: 'Пиво Афанасий Porter 8% 0.5л',
-    goodPrice: 105.00,
-    numberOfGoods: 588,
-    imageOfGoods: './icon/beer.jpeg',
-    category: 'alcohol'
-  },
-  {
-    id: 100000019,
-    goodsName: 'Виски Lagavulin 43% 0.75л п/у',
-    goodPrice: 7299.99,
-    numberOfGoods: 7,
-    imageOfGoods: './icon/whiskey.jpeg',
-    category: 'alcohol'
-  },
-  {
-    id: 100000020,
-    goodsName: 'Виски Chivas Regal 18 y.o. 40% 0.7л п/у',
-    goodPrice: 5743.99,
-    numberOfGoods: 4,
-    imageOfGoods: './icon/whiskey2.jpeg',
-    category: 'alcohol'
-  },
-  {
-    id: 100000021,
-    goodsName: 'Абсент Jacques Senaux Absinthe Green 70% 0.7л',
-    goodPrice: 1790.99,
-    numberOfGoods: 11,
-    imageOfGoods: './icon/absinthe.jpeg',
-    category: 'alcohol'
-  }
-]
-//var JSONgoods = JSON.stringify(goods);
-//console.log(JSONgoods);
-//объект для хранения login (это ID в базе данных), passwordDB (это пароль в базе данных) и баланса
-var users = [
-  {
-    login: 'mrPTqp@gmail.com',
-    passwordDB: '123',
-    moneyBalanceDB: 12873
-  },
-  {
-    login: 'PTqp@yandex.ru',
-    passwordDB: '321',
-    moneyBalanceDB: 3333
-  }
-]
-//var JSONusers = JSON.stringify(users);
-//console.log(JSONusers);
+
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
@@ -266,7 +79,7 @@ function xhrSessionID(param, value) {
     } else {
       userObjesctFromServer = JSON.parse(getSessionID.responseText); // пропарсенный массив объектов с сервера 
       sessionIDFromServer = userObjesctFromServer[0].sessionIDDB;
-      //console.log(sessionIDDB);
+      //console.log(sessionIDFromServer);
       moneyFromServer = userObjesctFromServer[0].moneyBalanceDB;
       //console.log(moneyFromServer);
     };
@@ -926,7 +739,7 @@ function changeTotalPriceForSuchAProduct(e) {
   elemTotalPriceFotSuchProduct.appendChild(supIndexTotal);
 };
 
-function deleteProduct(e) {
+function deleteProduct() {
   var removeProductID = this.getAttribute('data-id');
   for (var i = 0; i < cart.length; i++) {
     if (cart[i].id == removeProductID) {
@@ -1031,15 +844,18 @@ function getCookie(name) {
 };
 
 function placeAnOrder() {
-  console.log(sessionIDFromServer);
+  //console.log(sessionIDFromServer);
   var cookiesSessionID = getCookie('sessionID');
-  console.log(cookiesSessionID);
-  console.log(moneyFromServer);
-  console.log(totalPrice);
+  //console.log(cookiesSessionID);
+  //console.log(moneyFromServer);
+  //console.log(totalPrice);
   if (sessionIDFromServer == cookiesSessionID) {
 
     if (totalPrice < moneyFromServer) {
       alert('Ваш заказ передан специалисту, который вскоре свяжется с вами для уточнения деталей');
+      document.getElementById('cart-item').innerHTML = '';
+      document.getElementById('total-price').innerHTML = '';
+      $('#cartModalCenter').modal('hide');
     } else {
       alert('Недостаточно средств, пополните баланс');
     };
@@ -1084,6 +900,7 @@ function checkAviableCoockie() {
       };
     });
   };
+  xhrSessionID('login', aviableCookiesID);
 };
 
 xhrGoods(paramGoods, valueParam);
