@@ -856,6 +856,12 @@ function placeAnOrder() {
       document.getElementById('cart-item').innerHTML = '';
       document.getElementById('total-price').innerHTML = '';
       $('#cartModalCenter').modal('hide');
+      var RUB = document.getElementById('total-price-main-page-RUB');
+      var COP = document.getElementById('total-price-main-page-COP');
+      var amount = document.getElementById('total-amount-main-page');
+      RUB.innerHTML = '0р.';
+      COP.innerHTML = '0коп.';
+      amount.innerHTML = '0';
     } else {
       alert('Недостаточно средств, пополните баланс');
     };
@@ -912,6 +918,45 @@ addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmoun
 
 window.addEventListener('DOMContentLoaded', checkAviableCoockie);
 
+document.getElementById('search-input').oninput = function () {
+  var val = this.value.trim();
+  xhrGoodsForSearch(function () {
+    var gObj = JSON.parse(this.responseText); // пропарсенный массив объектов с сервера 
 
+    if (val != '') {
+      for (var i = 0; i < gObj.length; i++) {
+        console.log(val);
+        console.log(gObj[i].goodsName);
+        console.log(gObj[i].goodsName.search(val));
+        if (gObj[i].goodsName.search(val) == -1) {
+          return;
+        } else {
+          console.log(gObj[i].goodsName);
+        }
+      }
+    }
+  });
 
+}
 
+function xhrGoodsForSearch(callback) {
+  var getGoodsForSearch = new XMLHttpRequest();
+  var URL = 'http://localhost:3000';
+  var URI = '/goods';
+  getGoodsForSearch.open('GET', URL + URI, true);
+  getGoodsForSearch.send();
+
+  getGoodsForSearch.onreadystatechange = function () {
+    if (this.readyState != 4) return;
+
+    if (this.status == 200) {
+      if (typeof callback === "function") {
+        callback.apply(getGoodsForSearch);
+      };
+    } else {
+      // обработать ошибку
+      alert(this.status + ': ' + this.statusText); // пример вывода: 404: Not Found
+      return;
+    };
+  };
+};
