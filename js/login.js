@@ -187,7 +187,6 @@ var users = [
 ]
 //var JSONusers = JSON.stringify(users);
 //console.log(JSONusers);
-var sessions = {}; //объект для хранения токена сессии и login пользователя
 var cartItem = document.getElementById('cart-item'); //сущность корзины
 var cart = []; //промежуточный объект корзины
 var mainScreenAmountGoods = 8; //переменная, отображающая текущее количество товаров на странице
@@ -202,7 +201,6 @@ var valueUsers = ''; //значение параметра, конкретная
 var sessionIDFromServer; //sessionID с сервера
 var moneyFromServer; //количество денег с сервера
 var totalPrice; //итоговая рассчитанная цена
-var loginFromServer;
 
 //запрос продуктов с сервера
 function xhrGoods(param, value) {
@@ -350,15 +348,8 @@ function controlCookiesAndSessions() {
     var token = MD5(sumEmailPassword);
     //console.log(token);
 
-    setSessions(token);
     setCookie(email, token);
     xhrSessionID('login', email);
-  };
-
-  //записывает полученный токен в sessions
-  function setSessions(token) {
-    sessions.login = token;
-    //console.log(sessions);
   };
 
   //записывает токен и email пользователя в куки
@@ -368,18 +359,18 @@ function controlCookiesAndSessions() {
     //console.log(document.cookie);
   };
 
-  //при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
-  function replaceAuthenticationFormToGreeting(emailForGreeting) {
-    var autorizationForm = document.getElementById('autorization');
-
-    autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + emailForGreeting + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit">Выйти</button></div></div></div>';
-    listenerForQuit();
-  };
-
   authentication(email, password);
 };
 
-//при нажатии кнопки "Выйти" удаляем sessionID из куки и объекта sessions и заменяем приветствие на форму авторизации
+//при успешной авторизации заменяет форму для ввода логина и пароля на приветствие и кнопку "выйти"
+function replaceAuthenticationFormToGreeting(emailForGreeting) {
+  var autorizationForm = document.getElementById('autorization');
+
+  autorizationForm.innerHTML = '<div class="d-flex flex-column bd-highlight mb-3 row"><div class="d-flex justify-content-center col-"><p>Привет, <b>' + emailForGreeting + '</b></p></div><div class="d-flex justify-content-center col-"><button type="button" class="btn btn-sm btn btn-light ml-2" id="quit">Выйти</button></div></div></div>';
+  listenerForQuit();
+};
+
+//при нажатии кнопки "Выйти" удаляем sessionID из куки и заменяем приветствие на форму авторизации
 function deleteSessionIDfromCookie() {
   Cookies.remove('id');
   Cookies.remove('sessionID');
@@ -1057,8 +1048,7 @@ function placeAnOrder() {
   };
 };
 
-function xhrSessionIDForCookie(value) {
-  var userObj;
+function xhrSessionIDForCookie(value, callback) {
   var getSessionIDForCookie = new XMLHttpRequest();
   var URL = 'http://localhost:3000';
   var URI = '/users?' + 'sessionIDDB' + '=' + value;
@@ -1069,39 +1059,41 @@ function xhrSessionIDForCookie(value) {
   getSessionIDForCookie.onreadystatechange = function () {
     if (this.readyState != 4) return;
 
-    if (this.status != 200) {
+    if (this.status == 200) {
+      if (typeof callback === "function") {
+        callback.apply(getSessionIDForCookie);
+      };
+    } else {
       // обработать ошибку
       alert(this.status + ': ' + this.statusText); // пример вывода: 404: Not Found
       return;
     };
-
-    userObj = JSON.parse(this.responseText); // пропарсенный массив объектов с сервера 
-    loginFromServer = userObj[0].login;
-    console.log(loginFromServer);
   };
 };
 
-
 function checkAviableCoockie() {
+  listenerForAutorization();
   var aviableCookiesSessionID = getCookie('sessionID');
-  xhrSessionIDForCookie(aviableCookiesSessionID);
-  //console.log(aviableCookiesSessionID);
-  if (aviableCookiesSessionID) {    
+  if (aviableCookiesSessionID) {
     var aviableCookiesID = getCookie('id');
-    //console.log(aviableCookiesID);
-    if (loginFromServer == aviableCookiesID)
-    replaceAuthenticationFormToGreeting(loginFromServer);
+    xhrSessionIDForCookie(aviableCookiesSessionID, function () {
+      var userObj = JSON.parse(this.responseText); // пропарсенный массив объектов с сервера 
+      var loginFromServer = userObj[0].login;
+      if (loginFromServer == aviableCookiesID) {
+        replaceAuthenticationFormToGreeting(loginFromServer);
+      };
+    });
   };
 };
 
 xhrGoods(paramGoods, valueParam);
 xhrUsers(paramUsers, valueUsers);
 
-listenerForAutorization();
-//checkAviableCoockie();
-
 //слушатель на прокрутку на сетке товаров
 addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmountGoods);
+
+
+window.addEventListener('DOMContentLoaded', checkAviableCoockie);
 
 
 
