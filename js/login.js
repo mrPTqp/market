@@ -905,8 +905,9 @@ function checkAviableCoockie() {
         replaceAuthenticationFormToGreeting(loginFromServer);
       };
     });
+    xhrSessionID('login', aviableCookiesID);
   };
-  xhrSessionID('login', aviableCookiesID);
+  
 };
 
 xhrGoods(paramGoods, valueParam);
@@ -918,27 +919,27 @@ addEvent(document.querySelector('.content-grid'), 'wheel', changeMainScreenAmoun
 
 window.addEventListener('DOMContentLoaded', checkAviableCoockie);
 
+//Поиск (вывод результат только в консоль, анимация не реализована)
 document.getElementById('search-input').oninput = function () {
-  var val = this.value.trim();
+  var val = this.value.trim().toLowerCase();
   xhrGoodsForSearch(function () {
     var gObj = JSON.parse(this.responseText); // пропарсенный массив объектов с сервера 
 
-    if (val != '') {
+    if (val != '' && val.length > 2) {
       for (var i = 0; i < gObj.length; i++) {
-        console.log(val);
-        console.log(gObj[i].goodsName);
-        console.log(gObj[i].goodsName.search(val));
-        if (gObj[i].goodsName.search(val) == -1) {
-          return;
+        var lowerCasrGoodsName = gObj[i].goodsName.toLowerCase();  
+        if (lowerCasrGoodsName.search(val) == -1) {
+          continue;
         } else {
           console.log(gObj[i].goodsName);
-        }
-      }
-    }
+        };
+      };
+    };
   });
 
-}
+};
 
+//XHR для запроса товаров с сервера при поиске
 function xhrGoodsForSearch(callback) {
   var getGoodsForSearch = new XMLHttpRequest();
   var URL = 'http://localhost:3000';
